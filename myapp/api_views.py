@@ -18,3 +18,10 @@ class SaleViewSet(viewsets.ModelViewSet):
         sales = self.get_queryset()
         analysis_results = get_associations(sales)
         return Response(analysis_results)
+
+    @action(detail=False, methods=['get'])
+    def status(self, request):
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        return Response({"db": "OK", "sales_count": Sale.objects.count()})
