@@ -108,8 +108,11 @@ function App() {
                         </div>
                       ))}
                     </div>
-                    
-                    <button className="w-full py-4 bg-dark text-white rounded-2xl font-black hover:bg-primary transition-colors shadow-lg shadow-purple-200">
+                    <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                      <span>SQL INDEX: ACTIVE</span>
+                      <span className="text-accent underline cursor-pointer">PERFORMANCE OK</span>
+                    </div>
+                    <button className="mt-4 w-full py-4 bg-dark text-white rounded-2xl font-black hover:bg-primary transition-colors shadow-lg shadow-purple-200">
                       DETAYLARI GÖR
                     </button>
                   </div>

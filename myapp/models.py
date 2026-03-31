@@ -12,7 +12,7 @@ class Product(models.Model):
 
 class Sale(models.Model):
     products = models.ManyToManyField(Product)
-    district = models.CharField(max_length=100)
+    district = models.CharField(max_length=100, db_index=True)
     shop_name = models.CharField(max_length=100)
     lat = models.FloatField(default=41.0082)
     lng = models.FloatField(default=28.9784)
