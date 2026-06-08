@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Product, Sale
-from .serializers import ProductSerializer, SaleSerializer
+from .models import Product, Sale, Feedback
+from .serializers import ProductSerializer, SaleSerializer, FeedbackSerializer
 from .utils.analysis import get_associations
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -20,8 +20,89 @@ class SaleViewSet(viewsets.ModelViewSet):
         return Response(analysis_results)
 
     @action(detail=False, methods=['get'])
+    def ai_report(self, request):
+        import os
+        from django.db.models import Count
+        
+        sales = self.get_queryset()
+        analysis_results = get_associations(sales)
+        toplam_sepet_sayisi = sales.count()
+        
+        populer_semtler = Sale.objects.values('district').annotate(
+            sayi=Count('id')).order_by('-sayi')
+        en_aktif_semt = populer_semtler[0]['district'] if populer_semtler else "İstanbul"
+        
+        # En yüksek support'lu ilk 5 birlikteliği özetle
+        associations_summary = ""
+        if analysis_results:
+            for i, assoc in enumerate(analysis_results[:5]):
+                items_str = " + ".join(assoc['items'])
+                associations_summary += f"{i+1}. {items_str} (Support: %{round(assoc['support']*100, 2)}, Confidence: %{round(assoc['confidence']*100, 2)}, Sepet Adedi: {assoc['count']})\n"
+        else:
+            associations_summary = "Henüz yeterli birliktelik kuralı tespit edilemedi."
+            
+        gemini_api_key = os.environ.get('GEMINI_API_KEY')
+        ai_genel_rapor = ""
+        
+        prompt = f"""
+        Sen TrendSepetiX e-ticaret analiz platformunun akıllı AI Strateji ve Veri Analitiği motorusun.
+        Aşağıda sepet veri tabanımızdan Apriori / FP-Growth birliktelik analizi algoritmalarıyla çıkarılmış en yüksek ilişkili ürün birliktelikleri, aktif semtler ve sepet verileri bulunmaktadır:
+        
+        En Yüksek Ürün Birliktelikleri:
+        {associations_summary}
+        
+        En Aktif Satış Semti: {en_aktif_semt}
+        Sistemdeki Toplam Analiz Edilen Sepet: {toplam_sepet_sayisi}
+        
+        Lütfen bu verileri analiz ederek şirket yöneticileri için Türkçe, profesyonel, akıcı ve stratejik bir "Yönetici Özeti ve Karar Destek Raporu" oluştur. 
+        Raporunda:
+        1. Birliktelik analizi sonuçlarını iş kararları açısından yorumla (Hangi ürünler beraber alınmış, neden?).
+        2. {en_aktif_semt} gibi en yüksek hacimli semtler için çapraz satış kampanyası (Bundle) önerileri sun.
+        3. Mağaza yöneticilerinin stok ve lojistik optimizasyonunu artıracak somut adımlar tavsiye et.
+        
+        Yanıtını HTML başlıkları ve paragrafları kullanarak ver. Örneğin: 
+        <h3 style="color:var(--primary); margin-top:0; font-size:1.4em; display:flex; align-items:center; gap:10px;"><i class="fas fa-chart-line"></i> TrendSepetiX AI Karar Destek Raporu</h3>
+        <p>Paragraf içerikleri...</p>
+        <h4 style="color:var(--dark); margin-bottom:8px; font-size:1.1em;"><i class="fas fa-shopping-basket"></i> Başlık</h4>
+        <strong>Kalın yazı</strong>
+        <ul><li>Liste öğesi</li></ul>
+        HTML yapısını bozacak dış etiketler veya <html>/<body> ekleme, sadece doğrudan gövde etiketlerini kullan. Sade ve üst düzey yöneticilere hitap eden profesyonel bir üslupla oluştur.
+        """
+        
+        if gemini_api_key:
+            try:
+                from google import genai
+                client = genai.Client(api_key=gemini_api_key)
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=prompt
+                )
+                ai_genel_rapor = response.text
+            except Exception as gem_err:
+                print(f"Gemini API REST çağrı hatası (google-genai): {gem_err}")
+                
+        if not ai_genel_rapor:
+            # Fallback
+            ai_genel_rapor = f"""<h3 style="color:var(--primary); margin-top:0; font-size:1.4em; display:flex; align-items:center; gap:10px;"><i class="fas fa-chart-line"></i> TrendSepetiX AI Karar Destek Raporu (Çevrimdışı Analiz)</h3>
+<p>Sistemdeki toplam <strong>{toplam_sepet_sayisi}</strong> sepet verisi FP-Growth ve Apriori algoritmalarıyla başarıyla analiz edilmiştir. Elde edilen bulgular, platformun bölgesel bazda yüksek büyüme potansiyeline ve optimize edilebilir kampanya alanlarına sahip olduğunu göstermektedir.</p>
+
+<h4 style="color:var(--dark); margin-bottom:8px; font-size:1.1em;"><i class="fas fa-shopping-basket"></i> 1. Sepet Birliktelik Bulguları (Association Analysis)</h4>
+<p>Veri madenciliği motorumuz, müşterilerin alışveriş alışkanlıklarında güçlü korelasyonlar tespit etmiştir. Özellikle en yüksek birliktelik oranına sahip ürünler:<br>
+<strong>{associations_summary.replace('\n', '<br>')}</strong>
+Bu durum, bu ürünlerin reyonlarda veya online katalogda yan yana listelenmesi durumunda satışları artıracağını kanıtlamaktadır.</p>
+
+<h4 style="color:var(--dark); margin-bottom:8px; font-size:1.1em;"><i class="fas fa-map-marked-alt"></i> 2. Bölgesel Strateji ve Lokasyon Fırsatları</h4>
+<p>En aktif satış bölgesi olan <strong>{en_aktif_semt}</strong> semtinde lojistik ve stok devir hızı en yüksek seviyemedir. Stok seviyelerinin optimize edilmesi stoksuzluk kayıplarını engelleyecektir.</p>"""
+
+        return Response({"report": ai_genel_rapor})
+
+    @action(detail=False, methods=['get'])
     def status(self, request):
         from django.db import connection
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
         return Response({"db": "OK", "sales_count": Sale.objects.count()})
+
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all().order_by('-created_at')
+    serializer_class = FeedbackSerializer
