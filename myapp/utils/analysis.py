@@ -14,7 +14,10 @@ def get_associations(sales, min_support=0.05):
         return []
 
     for sale in sales:
-        products = list(sale.products.all().values_list('name', flat=True))
+        if isinstance(sale, dict):
+            products = [p['name'] for p in sale['products']]
+        else:
+            products = [p.name for p in sale.products.all()]
         # Temel adları temizle (opsiyonel)
         products = [p.split(" #")[0] for p in products]
         unique_products = list(set(products))
