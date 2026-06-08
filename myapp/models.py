@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models # type: ignore
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -7,8 +7,9 @@ class Product(models.Model):
     stock = models.IntegerField(default=10)
     # Yeni: Ürün görseli için URL alanı
     image_url = models.CharField(max_length=500, default="https://via.placeholder.com/150")
+    expiration_date = models.DateField(null=True, blank=True)
 
-    def __str__(self): return self.name
+    def __str__(self): return f"{self.name} (SKT: {self.expiration_date})"
 
 class Sale(models.Model):
     products = models.ManyToManyField(Product)
@@ -17,5 +18,12 @@ class Sale(models.Model):
     lat = models.FloatField(default=41.0082)
     lng = models.FloatField(default=28.9784)
     recommendation = models.CharField(max_length=255, blank=True)
-
     def __str__(self): return f"{self.shop_name} - {self.district}"
+
+class Feedback(models.Model):
+    comment = models.TextField()
+    rating = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.rating} Yıldız - {self.comment[:20]}"
