@@ -78,7 +78,7 @@ export default function CatalogScreen() {
     setLoading(true);
     setIsConnected(null);
     
-    const productsUrl = baseUrl.endsWith('/api/') ? `${baseUrl}products/` : `${baseUrl}/products/`;
+    const productsUrl = baseUrl.endsWith('/api/') ? `${baseUrl}products/?all=true` : `${baseUrl}/products/?all=true`;
     const statusUrl = baseUrl.endsWith('/api/') ? `${baseUrl}sales/status/` : `${baseUrl}/sales/status/`;
 
     // Check backend status first

@@ -216,6 +216,51 @@ def index(request):
             'oyuncak araba': '/static/images/drone.png.jpg',
         }
 
+        UNSPLASH_FALLBACKS = {
+            'akıllı saat': 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500',
+            'saat': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+            'yün kazak': 'https://images.unsplash.com/photo-1574164904299-3a102b110380?w=500',
+            'yün atkı': 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=500',
+            'kışlık atkı': 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=500',
+            'şık gömlek': 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500',
+            'slim fit gömlek': 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500',
+            'terlik': 'https://images.unsplash.com/photo-1603808033192-082d6f74b30d?w=500',
+            'kışlık mont': 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500',
+            'spor ayakkabı': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500',
+            'robot süpürge': 'https://images.unsplash.com/photo-1518176258769-f227c798150e?w=500',
+            'telefon': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500',
+            'usb bellek 64gb': 'https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=500',
+            'hızlı şarj kablosu': 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=500',
+            'mekanik klavye': 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500',
+            'salatalık': 'https://images.unsplash.com/photo-1604974415429-23cf44ffb9d8?w=500',
+            'çengeköy salatalık': 'https://images.unsplash.com/photo-1604974415429-23cf44ffb9d8?w=500',
+            'toz şeker': 'https://images.unsplash.com/photo-1581447109200-bc27c249a6e4?w=500',
+            'yumurta': 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=500',
+            'su': 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=500',
+            'şalgam': 'https://images.unsplash.com/photo-1528498033373-3c6c08e93d79?w=500',
+            'soğan': 'https://images.unsplash.com/photo-1508747702-f520215d82a6?w=500',
+            'spagetti makarna': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500',
+            'sumak': 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=500',
+            'sıvı deterjan 2 lt': 'https://images.unsplash.com/photo-1607344645866-009c320b5ab8?w=500',
+            'sıvı sabun': 'https://images.unsplash.com/photo-1607344645866-009c320b5ab8?w=500',
+            'tablet': 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
+            'tam yağlı kaşar peyniri': 'https://images.unsplash.com/photo-1486887396181-e11717991e01?w=500',
+            'tam yağlı süt 1lt': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500',
+            'tam yağlı süt': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500',
+            'tarçın': 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=500',
+            'tavuk göğsü': 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=500',
+            'tuvalet kağıdı 12 li rulo': 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500',
+            'yarım yağlı süt 1 lt': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500',
+            'yüzey temizleyici': 'https://images.unsplash.com/photo-1585421514738-ee9a5db3da81?w=500',
+            'üzüm': 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=500',
+            'şeftali': 'https://images.unsplash.com/photo-1603052875302-d376b7c0638a?w=500',
+            'puzzle': 'https://images.unsplash.com/photo-1585241936222-2fc3d8a0c201?w=500',
+            'sakız': 'https://images.unsplash.com/photo-1575402846076-2e55cc69919d?w=500',
+            'saç boyası': 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500',
+            'salkım domates': 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500',
+            'çengeköy salatalık': 'https://images.unsplash.com/photo-1604974415429-23cf44ffb9d8?w=500'
+        }
+
         image_cache = {}
         def find_best_image(product_name, database_image_url=None):
             if product_name in image_cache:
@@ -251,6 +296,13 @@ def index(request):
                             res = database_image_url
                     else:
                         res = "https://via.placeholder.com/150"
+
+            # Check if the resolved image path is a local file that actually exists
+            if res and res.startswith('/static/'):
+                local_file_path = os.path.join(settings.BASE_DIR, res.lstrip('/'))
+                if not os.path.exists(local_file_path):
+                    # Fallback to Unsplash URL if local file is missing
+                    res = UNSPLASH_FALLBACKS.get(name_clean, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500')
             
             image_cache[product_name] = res
             return res
@@ -433,12 +485,13 @@ def index(request):
         if popular_bundle:
             bundle_desc = " ve ".join([p['name'] for p in popular_bundle['products']])
 
+        associations_summary_plain = associations_summary.replace('<br>', '\n')
         prompt = f"""
         Sen TrendSepetiX e-ticaret analiz platformunun akıllı AI Strateji ve Veri Analitiği motorusun.
         Aşağıda sepet veri tabanımızdan Apriori / FP-Growth birliktelik analizi algoritmalarıyla çıkarılmış en yüksek ilişkili ürün birliktelikleri, aktif semtler ve sepet verileri bulunmaktadır:
         
         En Yüksek Ürün Birliktelikleri:
-        {associations_summary.replace('<br>', '\n')}
+        {associations_summary_plain}
         
         En Aktif Satış Semti: {en_aktif_semt}
         Sistemdeki Toplam Analiz Edilen Sepet: {toplam_sepet_sayisi}

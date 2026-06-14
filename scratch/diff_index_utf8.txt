@@ -1,0 +1,318 @@
+﻿diff --git a/templates/index.html b/templates/index.html
+index 9e5322a..5fd7de1 100644
+--- a/templates/index.html
++++ b/templates/index.html
+@@ -1079,8 +1079,8 @@
+             <h1 style="margin-bottom: 5px;">­şÜÇ TrendSepetiX</h1>
+             <p style="color:#636e72; font-size:1.1em; margin: 0;">Yapay Zeka Destekli Perakende Analiz Paneli</p>
+         </div>
+-        <button onclick="openProfileModal()" class="profile-btn" style="min-width: 150px; padding: 12px 25px; margin: 0;">
+-            <i class="fas fa-user-circle" style="font-size: 1.2em;"></i> PROF─░L─░M
++        <button onclick="openProfileModal()" class="profile-btn" id="headerProfileBtn" style="min-width: 150px; padding: 12px 25px; margin: 0;">
++            <i class="fas fa-user-circle" style="font-size: 1.2em;"></i> PROF─░L─░M (<span id="profileStatusText" style="font-weight: 700; color: #d63031;">Giri┼ş Yap─▒lmad─▒</span>)
+         </button>
+     </header>
+ 
+@@ -1368,6 +1368,14 @@
+         </h2>
+         
+         <div style="margin-top: 20px;">
++            <div style="background: rgba(108, 92, 231, 0.05); padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(108, 92, 231, 0.15); margin-bottom: 20px; text-align: left;">
++                <div>
++                    <strong style="color: var(--dark); font-size: 0.95em;">Hesap Durumu</strong>
++                    <div id="modalStatusLabel" style="font-size: 0.85em; margin-top: 2px; color: #d63031;">Y├╝kleniyor...</div>
++                </div>
++                <button id="toggleLoginBtn" onclick="toggleLoginState()" style="padding: 8px 15px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; color: white; background: #00b894; transition: all 0.3s;">Giri┼ş Yap</button>
++            </div>
++
+             <div class="profile-form-group">
+                 <label>Ad Soyad</label>
+                 <input type="text" id="profName" placeholder="Ad─▒n─▒z Soyad─▒n─▒z">
+@@ -1619,31 +1627,83 @@
+ <script>
+     let customCart = [];
+ 
++    async function fetchCartFromServer() {
++        try {
++            const response = await fetch('/api/cart/');
++            if (response.ok) {
++                const data = await response.json();
++                customCart = [];
++                data.forEach(item => {
++                    const priceVal = parseFloat(item.product.price);
++                    for (let i = 0; i < item.quantity; i++) {
++                        customCart.push({
++                            id: item.id,
++                            product_id: item.product.id,
++                            name: item.product.name,
++                            price: priceVal,
++                            photo: item.product.image_url
++                        });
++                    }
++                });
++                renderCustomCart();
++            }
++        } catch (error) {
++            console.error("Cart fetch error:", error);
++        }
++    }
++
++    // Initialize 2s polling
++    setInterval(fetchCartFromServer, 2000);
++    // Also fetch immediately on page load
++    window.addEventListener('DOMContentLoaded', fetchCartFromServer);
++
+     function toggleCustomCart() {
+         const widget = document.getElementById('customCartWidget');
+         widget.classList.toggle('open');
+     }
+ 
+-    function addToCustomCart(name, price, photo) {
+-        customCart.push({ name, price: parseFloat(String(price).replace(',', '.')), photo });
+-        
+-        const widget = document.getElementById('customCartWidget');
+-        if (!widget.classList.contains('open')) {
+-            widget.classList.add('open');
++    async function addToCustomCart(name, price, photo) {
++        try {
++            const response = await fetch('/api/cart/add/', {
++                method: 'POST',
++                headers: {
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify({ product_name: name, quantity: 1 })
++            });
++            if (response.ok) {
++                await fetchCartFromServer();
++                const widget = document.getElementById('customCartWidget');
++                if (!widget.classList.contains('open')) {
++                    widget.classList.add('open');
++                }
++                widget.style.transform = 'scale(1.02)';
++                setTimeout(() => {
++                    widget.style.transform = '';
++                }, 200);
++            }
++        } catch (error) {
++            console.error("Error adding to cart:", error);
+         }
+-        
+-        renderCustomCart();
+-        
+-        // Button animation effect
+-        widget.style.transform = 'scale(1.02)';
+-        setTimeout(() => {
+-            widget.style.transform = '';
+-        }, 200);
+     }
+ 
+-    function removeFromCart(index) {
+-        customCart.splice(index, 1);
+-        renderCustomCart();
++    async function removeFromCart(index) {
++        const item = customCart[index];
++        if (!item) return;
++        try {
++            const response = await fetch('/api/cart/remove/', {
++                method: 'POST',
++                headers: {
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify({ product_name: item.name, quantity: 1 })
++            });
++            if (response.ok) {
++                await fetchCartFromServer();
++            }
++        } catch (error) {
++            console.error("Error removing from cart:", error);
++        }
+     }
+ 
+     function renderCustomCart() {
+@@ -1882,6 +1942,32 @@
+                 // Earn new coupon!
+                 earnCoupon(originalPayAmount);
+ 
++                // Create Sale in backend database and clear the cart
++                const productIds = currentPaymentCart.items.map(item => item.product_id).filter(id => id !== undefined);
++                const productNames = currentPaymentCart.items.map(item => item.name);
++                const districts = ["Kad─▒k├Ây", "Be┼şikta┼ş", "┼Şi┼şli", "├£sk├╝dar", "Sar─▒yer", "Fatih"];
++                const randomDistrict = districts[Math.floor(Math.random() * districts.length)];
++                
++                fetch('/api/sales/', {
++                    method: 'POST',
++                    headers: {
++                        'Content-Type': 'application/json',
++                    },
++                    body: JSON.stringify({
++                        product_ids: productIds,
++                        product_names: productNames,
++                        district: randomDistrict,
++                        shop_name: "Web Portal",
++                        lat: 41.0082,
++                        lng: 28.9784,
++                        recommendation: "Web Portal ├╝zerinden sat─▒n al─▒nd─▒."
++                    })
++                }).catch(err => console.error("Error creating sale:", err));
++
++                fetch('/api/cart/clear/', { method: 'POST' })
++                    .then(() => fetchCartFromServer())
++                    .catch(err => console.error("Error clearing cart:", err));
++
+                 if (isCustomCartPayment) {
+                     customCart = [];
+                     renderCustomCart();
+@@ -2317,19 +2403,78 @@
+     }
+ 
+     // Profile Logic
++    let userProfile = {
++        name: "Ahmet Y─▒lmaz",
++        phone: "0555 123 4567",
++        email: "ahmet@example.com",
++        address: "",
++        is_logged_in: false
++    };
++
++    async function fetchProfileFromServer() {
++        try {
++            const response = await fetch('/api/profile/current/');
++            if (response.ok) {
++                const data = await response.json();
++                userProfile = data;
++                
++                // Sync to localstorage
++                localStorage.setItem('userProfile', JSON.stringify({
++                    name: data.name,
++                    phone: data.phone,
++                    email: data.email,
++                    address: data.address
++                }));
++
++                // Update UI elements
++                const statusSpan = document.getElementById('profileStatusText');
++                if (statusSpan) {
++                    statusSpan.innerText = data.is_logged_in ? "Giri┼ş Yap─▒ld─▒" : "Giri┼ş Yap─▒lmad─▒";
++                    statusSpan.style.color = data.is_logged_in ? "#00b894" : "#d63031";
++                }
++
++                // If modal is open, refresh values
++                const modal = document.getElementById('profileModal');
++                if (modal && modal.style.display === 'block') {
++                    document.getElementById('profName').value = data.name;
++                    document.getElementById('profPhone').value = data.phone;
++                    document.getElementById('profEmail').value = data.email;
++                    document.getElementById('profAddress').value = data.address;
++
++                    const statusLabel = document.getElementById('modalStatusLabel');
++                    const toggleBtn = document.getElementById('toggleLoginBtn');
++                    if (statusLabel && toggleBtn) {
++                        statusLabel.innerText = data.is_logged_in ? `­şşó ${data.name || 'Kullan─▒c─▒'} olarak giri┼ş yap─▒ld─▒.` : "­şö┤ Giri┼ş yap─▒lmad─▒.";
++                        statusLabel.style.color = data.is_logged_in ? "#00b894" : "#d63031";
++                        toggleBtn.innerText = data.is_logged_in ? "├ç─▒k─▒┼ş Yap" : "Giri┼ş Yap";
++                        toggleBtn.style.background = data.is_logged_in ? "#d63031" : "#00b894";
++                    }
++                }
++            }
++        } catch (error) {
++            console.error("Profile fetch error:", error);
++        }
++    }
++
++    // Polling every 2s
++    setInterval(fetchProfileFromServer, 2000);
++    window.addEventListener('DOMContentLoaded', fetchProfileFromServer);
++
+     function openProfileModal() {
+-        const profile = JSON.parse(localStorage.getItem('userProfile')) || {
+-            name: '',
+-            phone: '',
+-            email: '',
+-            address: ''
+-        };
+-        
+-        document.getElementById('profName').value = profile.name;
+-        document.getElementById('profPhone').value = profile.phone;
+-        document.getElementById('profEmail').value = profile.email;
+-        document.getElementById('profAddress').value = profile.address;
+-        
++        document.getElementById('profName').value = userProfile.name;
++        document.getElementById('profPhone').value = userProfile.phone;
++        document.getElementById('profEmail').value = userProfile.email;
++        document.getElementById('profAddress').value = userProfile.address;
++
++        const statusLabel = document.getElementById('modalStatusLabel');
++        const toggleBtn = document.getElementById('toggleLoginBtn');
++        if (statusLabel && toggleBtn) {
++            statusLabel.innerText = userProfile.is_logged_in ? `­şşó ${userProfile.name || 'Kullan─▒c─▒'} olarak giri┼ş yap─▒ld─▒.` : "­şö┤ Giri┼ş yap─▒lmad─▒.";
++            statusLabel.style.color = userProfile.is_logged_in ? "#00b894" : "#d63031";
++            toggleBtn.innerText = userProfile.is_logged_in ? "├ç─▒k─▒┼ş Yap" : "Giri┼ş Yap";
++            toggleBtn.style.background = userProfile.is_logged_in ? "#d63031" : "#00b894";
++        }
++
+         document.getElementById('profileModal').style.display = 'block';
+     }
+ 
+@@ -2337,19 +2482,53 @@
+         document.getElementById('profileModal').style.display = 'none';
+     }
+ 
+-    function saveProfile() {
+-        const profile = {
++    async function saveProfile() {
++        const payload = {
+             name: document.getElementById('profName').value,
+             phone: document.getElementById('profPhone').value,
+             email: document.getElementById('profEmail').value,
+-            address: document.getElementById('profAddress').value
++            address: document.getElementById('profAddress').value,
++            is_logged_in: userProfile.is_logged_in
+         };
+-        
+-        localStorage.setItem('userProfile', JSON.stringify(profile));
+-        closeProfileModal();
+-        
+-        // Show subtle alert
+-        alert("Harika! Profil bilgileriniz taray─▒c─▒n─▒za ba┼şar─▒yla kaydedildi.");
++        try {
++            const response = await fetch('/api/profile/save_profile/', {
++                method: 'POST',
++                headers: {
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify(payload)
++            });
++            if (response.ok) {
++                await fetchProfileFromServer();
++                closeProfileModal();
++                alert("Harika! Profil bilgileriniz ba┼şar─▒yla sunucuya kaydedildi.");
++            }
++        } catch (error) {
++            console.error("Save profile error:", error);
++        }
++    }
++
++    async function toggleLoginState() {
++        try {
++            const newLoginState = !userProfile.is_logged_in;
++            const payload = {
++                ...userProfile,
++                is_logged_in: newLoginState
++            };
++            const response = await fetch('/api/profile/save_profile/', {
++                method: 'POST',
++                headers: {
++                    'Content-Type': 'application/json',
++                },
++                body: JSON.stringify(payload)
++            });
++            if (response.ok) {
++                await fetchProfileFromServer();
++                alert(newLoginState ? "Ba┼şar─▒yla giri┼ş yap─▒ld─▒!" : "Ba┼şar─▒yla ├ğ─▒k─▒┼ş yap─▒ld─▒!");
++            }
++        } catch (error) {
++            console.error("Toggle login error:", error);
++        }
+     }
+ </script>
+ 

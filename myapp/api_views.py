@@ -9,6 +9,39 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        category = self.request.query_params.get('category')
+        limit = self.request.query_params.get('limit')
+        
+        if category and category != 'Tümü':
+            # Map standard categories if needed
+            mapped_cat = category
+            if category == 'Gıda & Manav' or category == 'Gıda':
+                mapped_cat = 'Gıda'
+            elif category == 'Temizlik':
+                mapped_cat = 'Temizlik'
+            elif category == 'Elektronik' or category == 'Teknoloji':
+                mapped_cat = 'Teknoloji'
+            elif category == 'Giyim':
+                mapped_cat = 'Giyim'
+            elif category == 'Oyuncak':
+                mapped_cat = 'Oyuncak'
+            queryset = queryset.filter(category__icontains=mapped_cat)
+            
+        if self.request.query_params.get('all') == 'true':
+            return queryset
+            
+        if limit:
+            try:
+                queryset = queryset[:int(limit)]
+            except ValueError:
+                pass
+        else:
+            queryset = queryset[:100] # Default limit to prevent massive payload sizes
+            
+        return queryset
+
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all().prefetch_related('products')
     serializer_class = SaleSerializer
@@ -83,12 +116,13 @@ class SaleViewSet(viewsets.ModelViewSet):
                 
         if not ai_genel_rapor:
             # Fallback
+            associations_summary_html = associations_summary.replace('\n', '<br>')
             ai_genel_rapor = f"""<h3 style="color:var(--primary); margin-top:0; font-size:1.4em; display:flex; align-items:center; gap:10px;"><i class="fas fa-chart-line"></i> TrendSepetiX AI Karar Destek Raporu (Çevrimdışı Analiz)</h3>
 <p>Sistemdeki toplam <strong>{toplam_sepet_sayisi}</strong> sepet verisi FP-Growth ve Apriori algoritmalarıyla başarıyla analiz edilmiştir. Elde edilen bulgular, platformun bölgesel bazda yüksek büyüme potansiyeline ve optimize edilebilir kampanya alanlarına sahip olduğunu göstermektedir.</p>
 
 <h4 style="color:var(--dark); margin-bottom:8px; font-size:1.1em;"><i class="fas fa-shopping-basket"></i> 1. Sepet Birliktelik Bulguları (Association Analysis)</h4>
 <p>Veri madenciliği motorumuz, müşterilerin alışveriş alışkanlıklarında güçlü korelasyonlar tespit etmiştir. Özellikle en yüksek birliktelik oranına sahip ürünler:<br>
-<strong>{associations_summary.replace('\n', '<br>')}</strong>
+<strong>{associations_summary_html}</strong>
 Bu durum, bu ürünlerin reyonlarda veya online katalogda yan yana listelenmesi durumunda satışları artıracağını kanıtlamaktadır.</p>
 
 <h4 style="color:var(--dark); margin-bottom:8px; font-size:1.1em;"><i class="fas fa-map-marked-alt"></i> 2. Bölgesel Strateji ve Lokasyon Fırsatları</h4>

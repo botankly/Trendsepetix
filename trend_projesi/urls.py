@@ -6,6 +6,7 @@ from myapp import views, api_views
 router = DefaultRouter()
 router.register(r'products', api_views.ProductViewSet)
 router.register(r'sales', api_views.SaleViewSet)
+router.register(r'feedback', api_views.FeedbackViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
