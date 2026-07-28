@@ -1069,6 +1069,131 @@
             display: flex;
             gap: 12px;
         }
+
+        /* Auth Screen Styling */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 100%);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .auth-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            color: #f8fafc;
+        }
+
+        .auth-card h2 {
+            font-size: 2.2em;
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-card p {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-top: 5px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .auth-form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .auth-form-group label {
+            display: block;
+            font-size: 0.75em;
+            font-weight: 800;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #f8fafc;
+            font-size: 0.9em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .auth-form-group input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+        }
+
+        .auth-btn-submit {
+            width: 100%;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1em;
+            box-shadow: 0 8px 15px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .auth-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .auth-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .auth-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -1079,9 +1204,14 @@
             <h1 style="margin-bottom: 5px;">🚀 TrendSepetiX</h1>
             <p style="color:#636e72; font-size:1.1em; margin: 0;">Yapay Zeka Destekli Perakende Analiz Paneli</p>
         </div>
-        <button onclick="openProfileModal()" class="profile-btn" style="min-width: 150px; padding: 12px 25px; margin: 0;">
-            <i class="fas fa-user-circle" style="font-size: 1.2em;"></i> PROFİLİM
-        </button>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="openProfileModal()" class="profile-btn" style="min-width: 130px; padding: 12px 20px; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-user-circle" style="font-size: 1.2em;"></i> PROFİLİM
+            </button>
+            <button onclick="handleDjangoLogout()" class="profile-btn" style="min-width: 50px; padding: 12px 15px; margin: 0; background: #ff7675; border-color: transparent; display: flex; align-items: center; justify-content: center;" title="Güvenli Çıkış">
+                <i class="fas fa-sign-out-alt" style="font-size: 1.1em; color: white;"></i>
+            </button>
+        </div>
     </header>
 
     <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
@@ -2753,7 +2883,197 @@
             console.error("Mağaza grafiği yükleme hatası:", e);
         }
     });
+
+    // Auth logic for templates/index.html (port 8000)
+    function checkDjangoAuth() {
+        const isAuth = localStorage.getItem('django_auth') === 'true';
+        const overlay = document.getElementById('djangoAuthOverlay');
+        if (isAuth) {
+            if (overlay) overlay.style.display = 'none';
+        } else {
+            if (overlay) overlay.style.display = 'flex';
+        }
+    }
+
+    function handleDjangoLogin(e) {
+        if (e) e.preventDefault();
+        const emailInput = document.getElementById('djangoLoginEmail').value;
+        const passwordInput = document.getElementById('djangoLoginPassword').value;
+        const errDiv = document.getElementById('djangoLoginError');
+        
+        if (!emailInput || !passwordInput) {
+            errDiv.innerText = 'Lütfen tüm alanları doldurun.';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        const registeredUsers = JSON.parse(localStorage.getItem('web_users_db')) || [];
+        const defaultUser = { name: 'Ahmet Yılmaz', email: 'admin@trendsepetix.com', password: 'admin' };
+        const allUsers = [defaultUser, ...registeredUsers];
+
+        const match = allUsers.find(u => u.email.toLowerCase() === emailInput.toLowerCase() && u.password === passwordInput);
+        if (match) {
+            localStorage.setItem('django_auth', 'true');
+            localStorage.setItem('django_user', JSON.stringify(match));
+            localStorage.setItem('web_auth', 'true');
+            localStorage.setItem('web_user', JSON.stringify(match));
+            
+            document.getElementById('djangoAuthOverlay').style.display = 'none';
+            location.reload();
+        } else {
+            errDiv.innerText = 'E-posta adresi veya şifre hatalı.';
+            errDiv.style.display = 'block';
+        }
+    }
+
+    function toggleDjangoAuthView(view) {
+        const loginForm = document.getElementById('djangoLoginForm');
+        const signupForm = document.getElementById('djangoSignupForm');
+        if (view === 'signup') {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+        } else {
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+        }
+    }
+
+    function handleDjangoSignup(e) {
+        if (e) e.preventDefault();
+        const nameInput = document.getElementById('djangoSignupName').value;
+        const emailInput = document.getElementById('djangoSignupEmail').value;
+        const passwordInput = document.getElementById('djangoSignupPassword').value;
+        const confirmInput = document.getElementById('djangoSignupConfirm').value;
+        const errDiv = document.getElementById('djangoSignupError');
+        const successDiv = document.getElementById('djangoSignupSuccess');
+
+        errDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+
+        if (!nameInput || !emailInput || !passwordInput || !confirmInput) {
+            errDiv.innerText = 'Lütfen tüm alanları doldurun.';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        if (passwordInput !== confirmInput) {
+            errDiv.innerText = 'Şifreler uyuşmuyor.';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        if (passwordInput.length < 4) {
+            errDiv.innerText = 'Şifre en az 4 karakter olmalıdır.';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        const registeredUsers = JSON.parse(localStorage.getItem('web_users_db')) || [];
+
+        if (registeredUsers.some(u => u.email.toLowerCase() === emailInput.toLowerCase()) || emailInput.toLowerCase() === 'admin@trendsepetix.com') {
+            errDiv.innerText = 'Bu e-posta adresi zaten kullanımda.';
+            errDiv.style.display = 'block';
+            return;
+        }
+
+        const newUser = { name: nameInput, email: emailInput, password: passwordInput };
+        registeredUsers.push(newUser);
+        localStorage.setItem('web_users_db', JSON.stringify(registeredUsers));
+
+        successDiv.innerText = 'Hesabınız başarıyla oluşturuldu! Giriş ekranına yönlendiriliyorsunuz...';
+        successDiv.style.display = 'block';
+
+        setTimeout(() => {
+            toggleDjangoAuthView('login');
+            document.getElementById('djangoSignupName').value = '';
+            document.getElementById('djangoSignupEmail').value = '';
+            document.getElementById('djangoSignupPassword').value = '';
+            document.getElementById('djangoSignupConfirm').value = '';
+            successDiv.style.display = 'none';
+        }, 2000);
+    }
+
+    function handleDjangoLogout() {
+        localStorage.removeItem('django_auth');
+        localStorage.removeItem('django_user');
+        localStorage.removeItem('web_auth');
+        localStorage.removeItem('web_user');
+        location.reload();
+    }
+
+    checkDjangoAuth();
 </script>
+
+<!-- Auth Screen Overlay HTML -->
+<div id="djangoAuthOverlay" class="auth-overlay">
+    <div class="auth-card">
+        <div style="background: var(--primary); color: white; display: inline-block; padding: 12px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 8px 15px rgba(108, 92, 231, 0.2);">
+            <i class="fas fa-chart-line text-lg" style="font-size: 1.5em;"></i>
+        </div>
+        <h2>TrendSepetiX</h2>
+        <p>Yapay Zeka Destekli Perakende Analiz Paneli</p>
+
+        <!-- LOGIN FORM -->
+        <form id="djangoLoginForm" onsubmit="handleDjangoLogin(event)">
+            <h3 style="font-size: 1.1em; font-weight: 800; color: #f8fafc; margin-bottom: 20px;">İşletme Girişi</h3>
+            <div id="djangoLoginError" class="auth-error"></div>
+
+            <div class="auth-form-group">
+                <label>E-posta Adresi</label>
+                <input type="email" id="djangoLoginEmail" placeholder="ornek@trendsepetix.com" required>
+            </div>
+
+            <div class="auth-form-group">
+                <label>Şifre</label>
+                <input type="password" id="djangoLoginPassword" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="auth-btn-submit">GİRİŞ YAP</button>
+
+            <div style="margin-top: 20px; font-size: 0.85em; font-weight: 600; color: #94a3b8;">
+                Hesabınız yok mu? <span onclick="toggleDjangoAuthView('signup')" style="color: #a29bfe; cursor: pointer; font-weight: 800; text-decoration: underline;">Yeni Hesap Oluştur</span>
+            </div>
+
+            <div style="background: rgba(108, 92, 231, 0.1); border: 1px solid rgba(108, 92, 231, 0.2); border-radius: 12px; padding: 10px; font-size: 0.75em; color: #e9d5ff; font-weight: 700; margin-top: 20px; line-height: 1.5;">
+                💡 Demo Giriş Bilgileri:<br>
+                E-posta: <span style="text-decoration: underline;">admin@trendsepetix.com</span> / Şifre: <span style="text-decoration: underline;">admin</span>
+            </div>
+        </form>
+
+        <!-- SIGNUP FORM -->
+        <form id="djangoSignupForm" onsubmit="handleDjangoSignup(event)" style="display: none;">
+            <h3 style="font-size: 1.1em; font-weight: 800; color: #f8fafc; margin-bottom: 20px;">Yeni Hesap Oluştur</h3>
+            <div id="djangoSignupError" class="auth-error"></div>
+            <div id="djangoSignupSuccess" class="auth-success"></div>
+
+            <div class="auth-form-group">
+                <label>Ad Soyad</label>
+                <input type="text" id="djangoSignupName" placeholder="Ahmet Yılmaz" required>
+            </div>
+
+            <div class="auth-form-group">
+                <label>E-posta Adresi</label>
+                <input type="email" id="djangoSignupEmail" placeholder="ornek@trendsepetix.com" required>
+            </div>
+
+            <div class="auth-form-group">
+                <label>Şifre</label>
+                <input type="password" id="djangoSignupPassword" placeholder="••••••••" required>
+            </div>
+
+            <div class="auth-form-group">
+                <label>Şifre Tekrarı</label>
+                <input type="password" id="djangoSignupConfirm" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="auth-btn-submit">HESAP OLUŞTUR</button>
+
+            <div style="margin-top: 20px; font-size: 0.85em; font-weight: 600; color: #94a3b8;">
+                Zaten üye misiniz? <span onclick="toggleDjangoAuthView('login')" style="color: #a29bfe; cursor: pointer; font-weight: 800; text-decoration: underline;">Giriş Yap</span>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

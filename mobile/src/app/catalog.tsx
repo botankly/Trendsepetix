@@ -24,9 +24,22 @@ const { width } = Dimensions.get('window');
 const getAutoDiscoverIp = () => {
   const hostUri = Constants.expoConfig?.hostUri; // e.g. "192.168.1.35:8081"
   if (hostUri) {
-    return hostUri.split(':')[0];
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return ip;
+    }
   }
-  return '192.168.1.100'; // Default developer fallback IP
+  return '10.95.236.200'; // Default developer fallback IP
+};
+
+// Safe Fetch with Timeout Helper
+const fetchWithTimeout = (url: string, options: any = {}, timeout = 5000) => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Network timeout')), timeout)
+    )
+  ]) as Promise<Response>;
 };
 
 export default function CatalogScreen() {
@@ -82,12 +95,12 @@ export default function CatalogScreen() {
     const statusUrl = baseUrl.endsWith('/api/') ? `${baseUrl}sales/status/` : `${baseUrl}/sales/status/`;
 
     // Check backend status first
-    fetch(statusUrl, { method: 'GET', headers: { 'Accept': 'application/json' } })
+    fetchWithTimeout(statusUrl, { method: 'GET', headers: { 'Accept': 'application/json' } })
       .then(res => res.json())
       .then(data => {
         if (data.db === 'OK') {
           setIsConnected(true);
-          return fetch(productsUrl);
+          return fetchWithTimeout(productsUrl);
         } else {
           throw new Error('Database is offline');
         }
@@ -136,9 +149,16 @@ export default function CatalogScreen() {
     if (url.startsWith('http') || url.startsWith('data:')) {
       return url;
     }
-    // Prepend active Django server host
-    const cleanHost = activeApiUrl.replace('/api/', '');
-    return `${cleanHost}${url}`;
+    try {
+      const match = activeApiUrl.match(/^(https?:\/\/[^\/]+)/);
+      if (match) {
+        const baseUrl = match[1];
+        return `${baseUrl}${url}`;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return url;
   };
 
   // 2. Category Assignment Helper (Matches views.py logic)

@@ -3,12 +3,308 @@ import './App.css';
 import productsData from './products.json';
 import FeedbackComponent from './FeedbackComponent';
 
+const MOCK_SALES = [
+  {
+    id: 101,
+    shop_name: "Trendsepeti Kadıköy Merkez",
+    district: "Kadıköy",
+    lat: 40.9901,
+    lng: 29.0290,
+    products: [
+      { id: 1, name: "Kablosuz ANC Kulaklık", price: 1299, category: "Teknoloji" },
+      { id: 2, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji" }
+    ]
+  },
+  {
+    id: 102,
+    shop_name: "Trendsepeti Beşiktaş Sahil",
+    district: "Beşiktaş",
+    lat: 41.0428,
+    lng: 29.0075,
+    products: [
+      { id: 3, name: "Pamuklu Spor Tişört", price: 349, category: "Giyim & Aksesuar" },
+      { id: 4, name: "Koşu Ayakkabısı", price: 1499, category: "Spor & Outdoor" }
+    ]
+  },
+  {
+    id: 103,
+    shop_name: "Trendsepeti Şişli Cevahir",
+    district: "Şişli",
+    lat: 41.0600,
+    lng: 28.9870,
+    products: [
+      { id: 5, name: "Nemlendirici Yüz Kremi", price: 289, category: "Kişisel Bakım" },
+      { id: 6, name: "Sıvı El Sabunu", price: 79, category: "Kişisel Bakım" }
+    ]
+  },
+  {
+    id: 104,
+    shop_name: "Trendsepeti Üsküdar Çarşı",
+    district: "Üsküdar",
+    lat: 41.0267,
+    lng: 29.0154,
+    products: [
+      { id: 7, name: "Organik Zeytinyağı 1L", price: 320, category: "Gıda" },
+      { id: 8, name: "Premium Siyah Çay 1Kg", price: 180, category: "Gıda" }
+    ]
+  },
+  {
+    id: 105,
+    shop_name: "Trendsepeti Fatih Vatan",
+    district: "Fatih",
+    lat: 41.0186,
+    lng: 28.9438,
+    products: [
+      { id: 9, name: "Mikrofiber Temizlik Bezi", price: 65, category: "Temizlik" },
+      { id: 10, name: "Ultra Çamaşır Suyu", price: 49, category: "Temizlik" }
+    ]
+  },
+  {
+    id: 106,
+    shop_name: "Trendsepeti Sarıyer İstinye",
+    district: "Sarıyer",
+    lat: 41.1685,
+    lng: 29.0573,
+    products: [
+      { id: 11, name: "Kedi Maması Premium 5Kg", price: 450, category: "Pet Shop" },
+      { id: 12, name: "Kedi Kumu Kokusuz", price: 120, category: "Pet Shop" }
+    ]
+  },
+  {
+    id: 107,
+    shop_name: "Trendsepeti Kadıköy Moda",
+    district: "Kadıköy",
+    lat: 40.9850,
+    lng: 29.0250,
+    products: [
+      { id: 13, name: "12'li Resim Kalemi Seti", price: 150, category: "Kırtasiye" },
+      { id: 14, name: "Çizgili A4 Defter", price: 55, category: "Kırtasiye" }
+    ]
+  },
+  {
+    id: 108,
+    shop_name: "Trendsepeti Ataşehir Finans",
+    district: "Ataşehir",
+    lat: 40.9847,
+    lng: 29.1064,
+    products: [
+      { id: 15, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji" },
+      { id: 16, name: "Ergonomik Kablosuz Mouse", price: 450, category: "Teknoloji" }
+    ]
+  },
+  {
+    id: 109,
+    shop_name: "Trendsepeti Bakırköy Metroport",
+    district: "Bakırköy",
+    lat: 40.9782,
+    lng: 28.7845,
+    products: [
+      { id: 17, name: "Katlanabilir Kamp Sandalyesi", price: 399, category: "Spor & Outdoor" },
+      { id: 18, name: "Termos 1L", price: 650, category: "Spor & Outdoor" }
+    ]
+  },
+  {
+    id: 110,
+    shop_name: "Trendsepeti Kartal Sahil",
+    district: "Kartal",
+    lat: 40.8886,
+    lng: 29.1856,
+    products: [
+      { id: 19, name: "Bulaşık Makinesi Tableti 30 Lu", price: 240, category: "Temizlik" },
+      { id: 20, name: "Yüzey Temizleyici 2L", price: 75, category: "Temizlik" }
+    ]
+  },
+  {
+    id: 111,
+    shop_name: "Trendsepeti Beylikdüzü Migros",
+    district: "Beylikdüzü",
+    lat: 41.0012,
+    lng: 28.6419,
+    products: [
+      { id: 21, name: "Dekoratif Duvar Saati", price: 350, category: "Ev & Yaşam" },
+      { id: 22, name: "Led Ampul 10'lu", price: 190, category: "Ev & Yaşam" }
+    ]
+  },
+  {
+    id: 112,
+    shop_name: "Trendsepeti Beşiktaş Çarşı",
+    district: "Beşiktaş",
+    lat: 41.0435,
+    lng: 29.0065,
+    products: [
+      { id: 23, name: "Kablosuz Klavye Türkçe", price: 799, category: "Teknoloji" },
+      { id: 24, name: "Laptop Yükseltici Alüminyum", price: 350, category: "Teknoloji" }
+    ]
+  },
+  {
+    id: 113,
+    shop_name: "Trendsepeti Kadıköy Rıhtım",
+    district: "Kadıköy",
+    lat: 40.9910,
+    lng: 29.0275,
+    products: [
+      { id: 25, name: "Klasik Kot Ceket", price: 899, category: "Giyim & Aksesuar" },
+      { id: 26, name: "Deri Kemer Siyah", price: 249, category: "Giyim & Aksesuar" }
+    ]
+  },
+  {
+    id: 114,
+    shop_name: "Trendsepeti Üsküdar Sahil",
+    district: "Üsküdar",
+    lat: 41.0260,
+    lng: 29.0145,
+    products: [
+      { id: 27, name: "Doğal Bal 500g", price: 240, category: "Gıda" },
+      { id: 28, name: "Süzme Peynir 500 Gr", price: 140, category: "Gıda" }
+    ]
+  },
+  {
+    id: 115,
+    shop_name: "Trendsepeti Şişli Bomonti",
+    district: "Şişli",
+    lat: 41.0590,
+    lng: 28.9885,
+    products: [
+      { id: 29, name: "Diş Macunu Beyazlatıcı", price: 110, category: "Kişisel Bakım" },
+      { id: 30, name: "Şampuan Bitkisel Özlü", price: 135, category: "Kişisel Bakım" }
+    ]
+  }
+];
+
+const MOCK_ANALYSIS = [
+  { items: ["Kablosuz ANC Kulaklık", "Akıllı Saat Pro"], confidence: 0.85 },
+  { items: ["Pamuklu Spor Tişört", "Koşu Ayakkabısı"], confidence: 0.72 },
+  { items: ["Nemlendirici Yüz Kremi", "Sıvı El Sabunu"], confidence: 0.68 },
+  { items: ["Kedi Maması Premium 5Kg", "Kedi Kumu Kokusuz"], confidence: 0.91 },
+  { items: ["Bulaşık Makinesi Tableti 30 Lu", "Yüzey Temizleyici 2L"], confidence: 0.78 },
+  { items: ["Dekoratif Duvar Saati", "Led Ampul 10'lu"], confidence: 0.62 }
+];
+
+const MOCK_AI_REPORT = `
+  <h4>Trendsepetix Mağaza & Bölge Performansı AI Raporu</h4>
+  <p><strong>Genel Durum Analizi:</strong> İstanbul genelindeki 10 farklı semtte yer alan aktif şubelerimizin sipariş ve ciro verileri incelenmiştir. Mevcut verilere göre, en yüksek ciroya ulaşan kategori <strong>Teknoloji</strong> ve <strong>Spor & Outdoor</strong> kategorileridir.</p>
+  
+  <h5>Kategori & Çapraz Satış Önerileri (Apriori Analizi)</h5>
+  <p>Yapılan sepet analizi sonuçlarına göre, <strong>Kablosuz ANC Kulaklık</strong> satın alan müşterilerin %85'inin aynı zamanda <strong>Akıllı Saat Pro</strong> ürününü de sepetine eklediği gözlemlenmiştir. Bu durum, teknoloji kategorisindeki ikili paket (bundle) promosyonlarının satışları artırma potansiyeline işaret eder.</p>
+
+  <h5>Bölgesel Satış & İndirim Stratejisi</h5>
+  <p>Satış yoğunluğunun en düşük olduğu <strong>Fatih</strong> ve <strong>Beylikdüzü</strong> bölgelerinde sipariş adetlerini artırmak amacıyla sepet genelinde <strong>%20'ye varan dinamik indirim oranları</strong> uygulanması önerilmektedir. <strong>Kadıköy</strong> ve <strong>Beşiktaş</strong> gibi satışların yoğun olduğu merkezlerde ise indirim oranları %10 seviyesinde tutularak kar marjı maksimize edilebilir.</p>
+`;
+
 function App() {
   const [sales, setSales] = useState<any[]>([]);
   const [analysis, setAnalysis] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'map' | 'charts' | 'discount'>('dashboard');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Authentication States
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('web_auth') === 'true';
+  });
+  const [authView, setAuthView] = useState<'login' | 'signup'>('login');
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    const saved = localStorage.getItem('web_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  
+  // Login Form States
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  // Signup Form States
+  const [signupName, setSignupName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
+  const [signupError, setSignupError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState('');
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+
+    if (!loginEmail || !loginPassword) {
+      setLoginError('Lütfen tüm alanları doldurun.');
+      return;
+    }
+
+    // Retrieve users list from localStorage to validate
+    const registeredUsersRaw = localStorage.getItem('web_users_db');
+    const registeredUsers = registeredUsersRaw ? JSON.parse(registeredUsersRaw) : [];
+
+    // Prepopulate with a default admin user if database is empty
+    const defaultUser = { name: 'Ahmet Yılmaz', email: 'admin@trendsepetix.com', password: 'admin' };
+    const allUsers = [defaultUser, ...registeredUsers];
+
+    const match = allUsers.find(u => u.email.toLowerCase() === loginEmail.toLowerCase() && u.password === loginPassword);
+    if (match) {
+      setIsAuthenticated(true);
+      setCurrentUser(match);
+      localStorage.setItem('web_auth', 'true');
+      localStorage.setItem('web_user', JSON.stringify(match));
+      // Clear forms
+      setLoginEmail('');
+      setLoginPassword('');
+    } else {
+      setLoginError('E-posta adresi veya şifre hatalı.');
+    }
+  };
+
+  const handleSignupSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSignupError('');
+    setSignupSuccess('');
+
+    if (!signupName || !signupEmail || !signupPassword || !signupConfirmPassword) {
+      setSignupError('Lütfen tüm alanları doldurun.');
+      return;
+    }
+
+    if (signupPassword !== signupConfirmPassword) {
+      setSignupError('Şifreler uyuşmuyor.');
+      return;
+    }
+
+    if (signupPassword.length < 4) {
+      setSignupError('Şifre en az 4 karakter olmalıdır.');
+      return;
+    }
+
+    const registeredUsersRaw = localStorage.getItem('web_users_db');
+    const registeredUsers = registeredUsersRaw ? JSON.parse(registeredUsersRaw) : [];
+
+    if (registeredUsers.some((u: any) => u.email.toLowerCase() === signupEmail.toLowerCase()) || signupEmail.toLowerCase() === 'admin@trendsepetix.com') {
+      setSignupError('Bu e-posta adresi zaten kullanımda.');
+      return;
+    }
+
+    const newUser = { name: signupName, email: signupEmail, password: signupPassword };
+    const updatedUsers = [...registeredUsers, newUser];
+    localStorage.setItem('web_users_db', JSON.stringify(updatedUsers));
+
+    setSignupSuccess('Hesabınız başarıyla oluşturuldu! Şimdi giriş yapabilirsiniz.');
+    
+    // Clear signup form
+    setSignupName('');
+    setSignupEmail('');
+    setSignupPassword('');
+    setSignupConfirmPassword('');
+
+    // Switch to login view after a short delay
+    setTimeout(() => {
+      setAuthView('login');
+      setSignupSuccess('');
+    }, 2000);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    localStorage.removeItem('web_auth');
+    localStorage.removeItem('web_user');
+  };
 
   // AI Modal States
   const [showAiModal, setShowAiModal] = useState<boolean>(false);
@@ -26,23 +322,50 @@ function App() {
 
   // Fetch initial sales and rule mining analysis from Django REST API
   useEffect(() => {
-    // 1. Fetch Sales
-    fetch('http://127.0.0.1:8000/api/sales/')
-      .then(res => res.json())
-      .then(data => {
-        setSales(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Sales fetch error:", err);
-        setLoading(false);
-      });
+    const fetchSales = () => {
+      fetch('http://127.0.0.1:8000/api/sales/')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            setSales(data);
+          } else {
+            setSales(MOCK_SALES);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Sales fetch error:", err);
+          setSales(MOCK_SALES);
+          setLoading(false);
+        });
+    };
+
+    fetchSales();
 
     // 2. Fetch Association Analysis (Apriori/FP-Growth)
     fetch('http://127.0.0.1:8000/api/sales/analyze/')
       .then(res => res.json())
-      .then(data => setAnalysis(data.slice(0, 6)))
-      .catch(err => console.error("Analysis fetch error:", err));
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          setAnalysis(data.slice(0, 6));
+        } else {
+          setAnalysis(MOCK_ANALYSIS);
+        }
+      })
+      .catch(err => {
+        console.error("Analysis fetch error:", err);
+        setAnalysis(MOCK_ANALYSIS);
+      });
+
+    // Poll server every 10 seconds for real-time synchronization if running locally
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    let interval: any;
+    if (isLocal) {
+      interval = setInterval(fetchSales, 5000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   // Compute Dynamic Metrics
@@ -80,9 +403,35 @@ function App() {
   };
 
   // Helper for dynamic image URL fallback
-  const getProductImageUrl = (url: string) => {
+  const getProductImageUrl = (url: string, name = '', category = '') => {
     if (!url) return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
     if (url.startsWith('http')) return url;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal) {
+      const nameLower = name.toLowerCase();
+      if (nameLower.includes('airpods') || nameLower.includes('kulaklık')) {
+        return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
+      }
+      if (nameLower.includes('saat')) {
+        return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+      }
+      if (category === 'Teknoloji') {
+        return 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=500';
+      }
+      if (category === 'Giyim & Aksesuar') {
+        return 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=500';
+      }
+      if (category === 'Gıda') {
+        return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
+      }
+      if (category === 'Kişisel Bakım') {
+        return 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500';
+      }
+      if (category === 'Pet Shop') {
+        return 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=500';
+      }
+      return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+    }
     return `http://127.0.0.1:8000${url}`;
   };
 
@@ -95,12 +444,16 @@ function App() {
     fetch('http://127.0.0.1:8000/api/sales/ai_report/')
       .then(res => res.json())
       .then(data => {
-        setAiReport(data.report);
+        if (data && data.report) {
+          setAiReport(data.report);
+        } else {
+          setAiReport(MOCK_AI_REPORT);
+        }
         setAiLoading(false);
       })
       .catch(err => {
         console.error("AI Report fetch error:", err);
-        setAiReport("<p style='color:red;'>AI raporu oluşturulurken bir bağlantı hatası gerçekleşti. Lütfen daha sonra tekrar deneyin.</p>");
+        setAiReport(MOCK_AI_REPORT);
         setAiLoading(false);
       });
   };
@@ -338,6 +691,194 @@ function App() {
     };
   }, [sales, activeTab]);
 
+  if (!isAuthenticated) {
+    return (
+      <div className="auth-fullscreen-container flex items-center justify-center min-h-screen relative overflow-hidden bg-cover bg-center bg-[#f8f9fd]">
+        {/* Dynamic Abstract Background Elements */}
+        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-400/20 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000"></div>
+
+        <div className="auth-glass-card max-w-md w-full p-8 mx-4 rounded-[2.5rem] shadow-2xl relative border border-white/40 backdrop-blur-xl">
+          <div className="text-center mb-6">
+            <div className="inline-block bg-primary text-white p-3.5 rounded-2xl shadow-lg shadow-primary/30 mb-3.5">
+              <i className="fas fa-chart-line text-2xl"></i>
+            </div>
+            <h2 className="text-2xl font-black text-dark tracking-tight">TrendSepetiX</h2>
+            <p className="text-xs font-bold text-gray-400 mt-1 uppercase tracking-wide">Analiz & Karar Destek Sistemi</p>
+          </div>
+
+          {authView === 'login' ? (
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <h3 className="text-base font-black text-dark text-center">İşletme Yöneticisi Girişi</h3>
+              
+              {loginError && (
+                <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-xl border border-red-100 flex items-center gap-2">
+                  <span>⚠️</span> {loginError}
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">E-posta Adresi</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-envelope text-xs"></i>
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="ornek@trendsepetix.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Şifre</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-lock text-xs"></i>
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none mt-2"
+              >
+                GİRİŞ YAP
+              </button>
+
+              <div className="text-center pt-2">
+                <p className="text-xs text-gray-400 font-bold">
+                  Hesabınız yok mu?{' '}
+                  <span
+                    onClick={() => { setAuthView('signup'); setLoginError(''); }}
+                    className="text-primary hover:underline cursor-pointer font-black"
+                  >
+                    Yeni Hesap Oluştur
+                  </span>
+                </p>
+              </div>
+
+              <div className="bg-purple-50/60 p-3 rounded-2xl border border-purple-100/50 text-[10px] text-primary/80 font-bold text-center mt-3 leading-relaxed">
+                💡 Demo Yönetici Bilgileri:<br />
+                E-posta: <span className="underline">admin@trendsepetix.com</span><br />
+                Şifre: <span className="underline">admin</span>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSignupSubmit} className="space-y-3">
+              <h3 className="text-base font-black text-dark text-center">Yeni Hesap Oluştur</h3>
+
+              {signupError && (
+                <div className="bg-red-50 text-red-600 text-xs font-bold p-3 rounded-xl border border-red-100 flex items-center gap-2">
+                  <span>⚠️</span> {signupError}
+                </div>
+              )}
+
+              {signupSuccess && (
+                <div className="bg-green-50 text-green-600 text-xs font-bold p-3 rounded-xl border border-green-100 flex items-center gap-2">
+                  <span>✅</span> {signupSuccess}
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Ad Soyad</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-user text-xs"></i>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Ahmet Yılmaz"
+                    value={signupName}
+                    onChange={(e) => setSignupName(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">E-posta Adresi</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-envelope text-xs"></i>
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="ornek@trendsepetix.com"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Şifre</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-lock text-xs"></i>
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Şifre Tekrarı</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i className="fas fa-lock text-xs"></i>
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={signupConfirmPassword}
+                    onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-xs font-bold transition-all text-dark placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none mt-2"
+              >
+                HESAP OLUŞTUR
+              </button>
+
+              <div className="text-center pt-2">
+                <p className="text-xs text-gray-400 font-bold">
+                  Zaten üye misiniz?{' '}
+                  <span
+                    onClick={() => { setAuthView('login'); setSignupError(''); }}
+                    className="text-primary hover:underline cursor-pointer font-black"
+                  >
+                    Giriş Yap
+                  </span>
+                </p>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f8f9fd] w-full text-dark font-sans pb-12 antialiased">
       {/* HEADER NAVBAR */}
@@ -390,6 +931,24 @@ function App() {
                 className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all border-none cursor-pointer ${activeTab === 'discount' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-dark bg-transparent'}`}
               >
                 İNDİRİM STRATEJİSİ
+              </button>
+            </div>
+
+            {/* User Profile & Logout */}
+            <div className="flex items-center gap-2.5 bg-purple-50/50 pl-3 pr-2 py-1.5 rounded-2xl border border-purple-100 shadow-xs">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black text-dark leading-tight">{currentUser?.name || 'Yönetici'}</span>
+                <span className="text-[8px] font-bold text-gray-400 tracking-wider">İŞLETME YÖNETİCİSİ</span>
+              </div>
+              <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-xs shadow-inner">
+                {currentUser?.name ? currentUser.name.split(' ').map((n: string) => n[0]).join('') : 'Y'}
+              </div>
+              <button 
+                onClick={handleLogout}
+                title="Güvenli Çıkış"
+                className="bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 w-8 h-8 rounded-xl flex items-center justify-center border-none cursor-pointer transition-colors shadow-xs"
+              >
+                <i className="fas fa-sign-out-alt text-xs"></i>
               </button>
             </div>
           </div>
@@ -511,7 +1070,7 @@ function App() {
                       {productsData.slice(0, 16).map((prod: any) => (
                         <div key={prod.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-sm transition-all group">
                           <div className="w-12 h-12 rounded-xl bg-white shadow-xs border border-gray-100 overflow-hidden flex items-center justify-center p-1">
-                            <img src={getProductImageUrl(prod.image)} alt={prod.name} className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform" />
+                            <img src={getProductImageUrl(prod.image, prod.name, prod.category)} alt={prod.name} className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="text-xs font-bold text-dark truncate leading-tight">{prod.name}</h4>

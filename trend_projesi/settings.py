@@ -100,8 +100,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'trendsepetix_db',
-            'USER': 'root',
-            'PASSWORD': '',
+            'USER': 'trend_user',
+            'PASSWORD': 'trend_password',
             'HOST': '127.0.0.1',
             'PORT': '3306',
             'OPTIONS': {

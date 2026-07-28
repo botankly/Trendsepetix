@@ -8,6 +8,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class SaleSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True, read_only=True)
+    product_ids = serializers.PrimaryKeyRelatedField(
+        many=True, write_only=True, queryset=Product.objects.all(), source='products'
+    )
     
     class Meta:
         model = Sale

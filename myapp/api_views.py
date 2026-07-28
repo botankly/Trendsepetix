@@ -12,43 +12,66 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Product.objects.all()
         category = self.request.query_params.get('category')
-        limit = self.request.query_params.get('limit')
         
         if category and category != 'Tümü':
             # Map standard categories if needed
             mapped_cat = category
-            if category == 'Gıda & Manav' or category == 'Gıda':
-                mapped_cat = 'Gıda'
-            elif category == 'Temizlik':
+            if 'Gıda' in category:
+                mapped_cat = 'Market & Gıda'
+            elif 'Temizlik' in category:
                 mapped_cat = 'Temizlik'
-            elif category == 'Elektronik' or category == 'Teknoloji':
-                mapped_cat = 'Teknoloji'
-            elif category == 'Giyim':
-                mapped_cat = 'Giyim'
-            elif category == 'Oyuncak':
-                mapped_cat = 'Oyuncak'
+            elif 'Teknoloji' in category or 'Elektronik' in category:
+                mapped_cat = 'Teknoloji Mağazası'
+            elif 'Giyim' in category or 'Moda' in category:
+                mapped_cat = 'Moda & Giyim'
+            elif 'Oyuncak' in category or 'Hobi' in category:
+                mapped_cat = 'Hobi & Oyuncak'
             queryset = queryset.filter(category__icontains=mapped_cat)
             
         if self.request.query_params.get('all') == 'true':
             return queryset
             
+        # Default to returning unique products based on base name
+        all_products = list(queryset)
+        seen_names = set()
+        unique_products = []
+        for p in all_products:
+            base_name = p.name.split(' #')[0]
+            if base_name not in seen_names:
+                seen_names.add(base_name)
+                p.name = base_name  # Clean name
+                unique_products.append(p)
+                
+        limit = self.request.query_params.get('limit')
+        if limit:
+            try:
+                unique_products = unique_products[:int(limit)]
+            except ValueError:
+                pass
+        else:
+            unique_products = unique_products[:100]
+            
+        return unique_products
+
+class SaleViewSet(viewsets.ModelViewSet):
+    queryset = Sale.objects.all().prefetch_related('products')
+    serializer_class = SaleSerializer
+
+    def get_queryset(self):
+        queryset = Sale.objects.all().prefetch_related('products')
+        limit = self.request.query_params.get('limit')
         if limit:
             try:
                 queryset = queryset[:int(limit)]
             except ValueError:
                 pass
         else:
-            queryset = queryset[:100] # Default limit to prevent massive payload sizes
-            
+            queryset = queryset[:50]  # Default limit to prevent massive payload sizes
         return queryset
-
-class SaleViewSet(viewsets.ModelViewSet):
-    queryset = Sale.objects.all().prefetch_related('products')
-    serializer_class = SaleSerializer
 
     @action(detail=False, methods=['get'])
     def analyze(self, request):
-        sales = self.get_queryset()
+        sales = Sale.objects.all().prefetch_related('products')
         analysis_results = get_associations(sales)
         return Response(analysis_results)
 
@@ -57,7 +80,7 @@ class SaleViewSet(viewsets.ModelViewSet):
         import os
         from django.db.models import Count
         
-        sales = self.get_queryset()
+        sales = Sale.objects.all().prefetch_related('products')
         analysis_results = get_associations(sales)
         toplam_sepet_sayisi = sales.count()
         

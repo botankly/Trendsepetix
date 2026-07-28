@@ -12,7 +12,8 @@ import {
   KeyboardAvoidingView, 
   Platform, 
   Dimensions,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,9 +25,42 @@ const { width, height } = Dimensions.get('window');
 const getAutoDiscoverIp = () => {
   const hostUri = Constants.expoConfig?.hostUri; // e.g. "192.168.1.35:8081"
   if (hostUri) {
-    return hostUri.split(':')[0];
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return ip;
+    }
   }
-  return '192.168.1.100'; // Default developer fallback IP
+  return '10.95.236.200'; // Default developer fallback IP
+};
+
+// Safe Fetch with Timeout Helper
+const fetchWithTimeout = (url: string, options: any = {}, timeout = 15000) => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Network timeout')), timeout)
+    )
+  ]) as Promise<Response>;
+};
+
+function cleanProductName(name: string) {
+  if (!name) return '';
+  return name.split(' #')[0];
+}
+
+const getImageUrl = (url: string, activeApiUrl: string) => {
+  if (!url) return '';
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  try {
+    const match = activeApiUrl.match(/^(https?:\/\/[^\/]+)/);
+    if (match) {
+      const baseUrl = match[1];
+      return `${baseUrl}${url}`;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return url;
 };
 
 export default function HomeScreen() {
@@ -86,6 +120,7 @@ export default function HomeScreen() {
 
   // Past Orders and Tracking states
   const [pastOrders, setPastOrders] = useState<any[]>([]);
+  const [orderStatuses, setOrderStatuses] = useState<Record<number, string>>({});
 
   // Coupon application states in cart
   const [couponCode, setCouponCode] = useState('');
@@ -112,14 +147,14 @@ export default function HomeScreen() {
     const salesUrl = `${cleanHost}/api/sales/`;
     const productsUrl = `${cleanHost}/api/products/?limit=50`;
 
-    fetch(statusUrl, { method: 'GET', headers: { 'Accept': 'application/json' } })
+    fetchWithTimeout(statusUrl, { method: 'GET', headers: { 'Accept': 'application/json' } })
       .then(res => res.json())
       .then(data => {
         if (data.db === 'OK') {
           setIsConnected(true);
           return Promise.all([
-            fetch(salesUrl).then(res => res.json()),
-            fetch(productsUrl).then(res => res.json())
+            fetchWithTimeout(salesUrl).then(res => res.json()),
+            fetchWithTimeout(productsUrl).then(res => res.json())
           ]);
         } else {
           throw new Error('Database is offline');
@@ -176,7 +211,70 @@ export default function HomeScreen() {
         storage.setItem('pastOrders', JSON.stringify(initialMock));
       }
     });
+
+    storage.getItem('orderStatuses').then(val => {
+      if (val) {
+        try {
+          setOrderStatuses(JSON.parse(val));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+
+    // Poll server every 5 seconds for real-time synchronization with web dashboard
+    const interval = setInterval(() => {
+      const cleanHost = activeApiUrl.replace('/api/sales/', '').replace('/api/sales', '');
+      const salesUrl = `${cleanHost}/api/sales/`;
+      const productsUrl = `${cleanHost}/api/products/?limit=50`;
+      
+      Promise.all([
+        fetchWithTimeout(salesUrl).then(res => res.json()),
+        fetchWithTimeout(productsUrl).then(res => res.json())
+      ])
+        .then(([salesData, productsData]) => {
+          if (salesData) setSales(salesData);
+          if (productsData) setProducts(productsData);
+        })
+        .catch(err => console.warn("Silent reload error:", err));
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [activeApiUrl]);
+
+  // Status progression timer hook
+  useEffect(() => {
+    const activeOrderIds = Object.keys(orderStatuses).filter(id => {
+      const status = orderStatuses[Number(id)];
+      return status === 'Hazırlanıyor' || status === 'Yolda';
+    });
+
+    if (activeOrderIds.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const nextStatuses = { ...orderStatuses };
+      let changed = false;
+
+      activeOrderIds.forEach(idStr => {
+        const id = Number(idStr);
+        const currentStatus = orderStatuses[id];
+        if (currentStatus === 'Hazırlanıyor') {
+          nextStatuses[id] = 'Yolda';
+          changed = true;
+        } else if (currentStatus === 'Yolda') {
+          nextStatuses[id] = 'Teslim Edildi';
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        setOrderStatuses(nextStatuses);
+        storage.setItem('orderStatuses', JSON.stringify(nextStatuses));
+      }
+    }, 15000);
+
+    return () => clearTimeout(timer);
+  }, [orderStatuses]);
 
   // Save User Profile Helper
   const handleSaveProfile = async () => {
@@ -258,48 +356,99 @@ export default function HomeScreen() {
       return;
     }
     setPaying(true);
-    setTimeout(() => {
-      const newOrderId = `TS-${Math.floor(1000 + Math.random() * 9000)}`;
-      const newOrderDate = new Date().toLocaleDateString('tr-TR');
-      
-      // Calculate final price
-      let orderProducts: any[] = [];
-      let shopName = 'Karma Sepet';
-      let totalAmount = 0;
 
-      if (selectedBasket) {
-        // AI recommended basket checkout
-        shopName = selectedBasket.shop_name;
-        orderProducts = selectedBasket.products.map((p: any) => ({ name: p.name, price: p.price }));
-        totalAmount = orderProducts.reduce((acc, p) => acc + parseFloat(p.price), 0);
-      } else {
-        // Custom cart checkout
-        const cartItems = Object.values(cart);
-        orderProducts = cartItems.map(item => ({ name: item.product.name, price: item.product.price }));
-        const subtotal = cartItems.reduce((acc, item) => acc + (parseFloat(item.product.price) * item.quantity), 0);
-        totalAmount = subtotal * (1 - appliedDiscount / 100);
-        shopName = cartItems[0]?.product?.category || 'Genel Alışveriş';
-      }
+    const newOrderId = `TS-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newOrderDate = new Date().toLocaleDateString('tr-TR');
+    
+    // Calculate final price
+    let orderProducts: any[] = [];
+    let shopName = 'Karma Sepet';
+    let totalAmount = 0;
 
-      const newOrder = {
-        id: newOrderId,
-        shop_name: shopName,
-        district: selectedBasket?.district || 'Adrese Teslim',
-        price: parseFloat(totalAmount.toFixed(2)),
-        date: newOrderDate,
-        status: 'Hazırlanıyor',
-        products: orderProducts
-      };
+    if (selectedBasket) {
+      // AI recommended basket checkout
+      shopName = selectedBasket.shop_name;
+      orderProducts = selectedBasket.products.map((p: any) => ({ name: p.name, price: p.price }));
+      totalAmount = orderProducts.reduce((acc, p) => acc + parseFloat(p.price), 0);
+    } else {
+      // Custom cart checkout
+      const cartItems = Object.values(cart);
+      orderProducts = cartItems.map(item => ({ name: item.product.name, price: item.product.price }));
+      const subtotal = cartItems.reduce((acc, item) => acc + (parseFloat(item.product.price) * item.quantity), 0);
+      totalAmount = subtotal * (1 - appliedDiscount / 100);
+      shopName = cartItems[0]?.product?.category || 'Genel Alışveriş';
+    }
 
-      const updatedOrders = [newOrder, ...pastOrders];
-      setPastOrders(updatedOrders);
-      storage.setItem('pastOrders', JSON.stringify(updatedOrders));
+    const newOrder = {
+      id: newOrderId,
+      shop_name: shopName,
+      district: selectedBasket?.district || 'Adrese Teslim',
+      price: parseFloat(totalAmount.toFixed(2)),
+      date: newOrderDate,
+      status: 'Hazırlanıyor',
+      products: orderProducts
+    };
 
-      setPaying(false);
-      setIsPaid(true);
-      setOrderSuccessId(newOrderId);
-      setCart({}); // clear cart on success
-    }, 1500);
+    // Save order to Django backend database for synchronization with Web Dashboard
+    const cleanHost = activeApiUrl.replace('/api/sales/', '').replace('/api/sales', '');
+    const postUrl = `${cleanHost}/api/sales/`;
+    const salePayload = {
+      district: selectedBasket?.district || 'Beşiktaş',
+      shop_name: selectedBasket ? selectedBasket.shop_name : 'TrendSepetiX Özel',
+      lat: selectedBasket?.lat || 41.0082,
+      lng: selectedBasket?.lng || 28.9784,
+      recommendation: selectedBasket ? selectedBasket.recommendation : 'Mobil Uygulamadan Satın Alım',
+      product_ids: selectedBasket 
+        ? selectedBasket.products.map((p: any) => p.id) 
+        : Object.values(cart).flatMap((item: any) => Array(item.quantity).fill(item.product.id))
+    };
+
+    fetch(postUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(salePayload)
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to save sale on server');
+        return res.json();
+      })
+      .then(data => {
+        console.log('Sale successfully sync\'d to server:', data);
+        
+        // 1. Update orderStatuses mapping with real database ID
+        if (data && data.id) {
+          const updatedStatuses = { ...orderStatuses, [data.id]: 'Hazırlanıyor' };
+          setOrderStatuses(updatedStatuses);
+          storage.setItem('orderStatuses', JSON.stringify(updatedStatuses));
+          
+          setOrderSuccessId(`Sipariş #${data.id}`);
+        } else {
+          setOrderSuccessId(newOrderId);
+        }
+
+        // 2. Trigger a reload of all sales from the server to keep lists in sync
+        loadData(activeApiUrl);
+
+        // 3. Clear cart and set success states
+        setCart({});
+        setPaying(false);
+        setIsPaid(true);
+      })
+      .catch(err => {
+        console.error('Sale sync error:', err);
+        // Fallback in case of server failure: save locally
+        const updatedOrders = [newOrder, ...pastOrders];
+        setPastOrders(updatedOrders);
+        storage.setItem('pastOrders', JSON.stringify(updatedOrders));
+
+        setOrderSuccessId(newOrderId);
+        setCart({});
+        setPaying(false);
+        setIsPaid(true);
+      });
   };
 
   // Opening Modals
@@ -328,6 +477,89 @@ export default function HomeScreen() {
       return cat.toLowerCase().includes(selectedCategory.toLowerCase());
     });
     return filtered.slice(0, 30);
+  };
+
+  const getMappedOrders = () => {
+    return [...sales]
+      .sort((a: any, b: any) => b.id - a.id)
+      .map((sale: any) => {
+        const totalPrice = sale.products?.reduce((acc: number, p: any) => acc + parseFloat(p.price || 0), 0) || 0;
+        
+        let status = 'Teslim Edildi';
+        if (sale.id > 500) {
+          status = orderStatuses[sale.id] || 'Hazırlanıyor';
+        }
+
+        let date = '14.06.2026';
+        if (sale.id > 500) {
+          date = '15.06.2026';
+        } else if (sale.id % 3 === 0) {
+          date = '14.06.2026';
+        } else if (sale.id % 3 === 1) {
+          date = '13.06.2026';
+        } else {
+          date = '12.06.2026';
+        }
+
+        return {
+          id: `Sipariş #${sale.id}`,
+          dbId: sale.id,
+          shop_name: sale.shop_name || 'TrendSepetiX',
+          district: sale.district || 'Adrese Teslim',
+          price: totalPrice,
+          date: date,
+          status: status,
+          products: sale.products || []
+        };
+      });
+  };
+
+  const getGroupedProducts = () => {
+    // Group products by base name to prevent duplicate listings (like multiple Laptops)
+    const uniqueMap = new Map<string, any>();
+    products.forEach((p: any) => {
+      if (!p.name) return;
+      const baseName = cleanProductName(p.name);
+      if (!uniqueMap.has(baseName)) {
+        uniqueMap.set(baseName, { ...p, name: baseName });
+      }
+    });
+    const uniqueProducts = Array.from(uniqueMap.values());
+
+    // Define categories to display in order
+    const displayCategories = [
+      { name: 'Teknoloji Mağazası', label: '💻 Elektronik' },
+      { name: 'Moda & Giyim', label: '👕 Giyim & Aksesuar' },
+      { name: 'Market & Gıda', label: '🍏 Gıda & Manav' },
+      { name: 'Temizlik', label: '🧼 Temizlik' },
+      { name: 'Hobi & Oyuncak', label: '🧩 Oyuncak & Hobi' }
+    ];
+
+    // Filter by selected category tab at the top
+    let categoriesToGroup = displayCategories;
+    if (selectedCategory !== 'Tümü') {
+      categoriesToGroup = displayCategories.filter(dc => {
+        // Match frontend key to backend category name
+        if (selectedCategory === 'Gıda') return dc.name === 'Market & Gıda';
+        if (selectedCategory === 'Teknoloji') return dc.name === 'Teknoloji Mağazası';
+        if (selectedCategory === 'Giyim & Aksesuar') return dc.name === 'Moda & Giyim';
+        if (selectedCategory === 'Hobi & Oyuncak') return dc.name === 'Hobi & Oyuncak';
+        return dc.name.toLowerCase().includes(selectedCategory.toLowerCase());
+      });
+    }
+
+    const grouped: { label: string; products: any[] }[] = [];
+    categoriesToGroup.forEach(cat => {
+      const catProducts = uniqueProducts.filter(p => p.category === cat.name);
+      if (catProducts.length > 0) {
+        grouped.push({
+          label: cat.label,
+          products: catProducts
+        });
+      }
+    });
+
+    return grouped;
   };
 
   const getProcessedSales = () => {
@@ -406,9 +638,11 @@ export default function HomeScreen() {
         >
           {products.map((p: any, idx: number) => (
             <View key={p.id || idx} style={styles.productVisualContainer}>
-              <View style={styles.productAvatar}>
-                <Ionicons name="cube-outline" size={20} color="#6b21a8" />
-              </View>
+              <Image 
+                source={{ uri: getImageUrl(p.image_url, activeApiUrl) }} 
+                style={styles.productAvatarImage} 
+                resizeMode="contain"
+              />
               <Text style={styles.visualProductName} numberOfLines={1}>
                 {p.name.split(' #')[0]}
               </Text>
@@ -433,7 +667,15 @@ export default function HomeScreen() {
                     {cleanName} <Text style={{ color: '#c084fc', fontSize: 9 }}>{variantNo}</Text>
                   </Text>
                 </View>
-                <Text style={styles.productStock}>{p.stock || 10} Adet</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={[styles.productStock, { marginRight: 8 }]}>{p.stock || 10} Adet</Text>
+                  <TouchableOpacity onPress={() => {
+                    addToCart(p);
+                    Alert.alert('Sepete Eklendi', `${cleanName} sepete eklendi.`);
+                  }} style={{ backgroundColor: '#10b981', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                    <Ionicons name="add" size={12} color="#fff" />
+                  </TouchableOpacity>
+                </View>
               </View>
             );
           })}
@@ -574,18 +816,23 @@ export default function HomeScreen() {
             
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featuredProductsScroll}>
               {[
-                { id: 991, name: 'Slim Fit Gömlek', price: '1174.32', oldPrice: '1350.47', image: 'shirt-outline' },
-                { id: 992, name: 'Yün Atkı', price: '517.87', oldPrice: '595.55', image: 'ribbon-outline' },
-                { id: 993, name: 'Drone', price: '25807.56', oldPrice: '29678.69', image: 'airplane-outline' },
+                { id: 991, name: 'Slim Fit Gömlek', price: '1174.32', oldPrice: '1350.47', image_url: '/static/images/slım fit gömlek.png.png' },
+                { id: 992, name: 'Yün Atkı', price: '517.87', oldPrice: '595.55', image_url: '/static/images/yün atkı.png.png' },
+                { id: 993, name: 'Drone', price: '25807.56', oldPrice: '29678.69', image_url: '/static/images/drone.png.jpg' },
               ].map((p) => (
                 <View key={p.id} style={styles.featuredProductItem}>
-                  <View style={styles.featuredProductAvatar}>
-                    <Ionicons name={p.image as any} size={24} color="#7c3aed" />
-                  </View>
+                  <Image 
+                    source={{ uri: getImageUrl(p.image_url, activeApiUrl) }} 
+                    style={styles.featuredProductImage} 
+                    resizeMode="contain"
+                  />
                   <Text style={styles.featuredProductName} numberOfLines={1}>{p.name}</Text>
                   <Text style={styles.featuredProductOldPrice}>{p.oldPrice} TL</Text>
                   <Text style={styles.featuredProductPrice}>{p.price} TL</Text>
-                  <TouchableOpacity onPress={() => addToCart({ id: p.id, name: p.name, price: p.price, category: 'Giyim' })} style={styles.btnFeaturedAdd}>
+                  <TouchableOpacity onPress={() => {
+                    addToCart({ id: p.id, name: p.name, price: p.price, category: 'Giyim' });
+                    Alert.alert('Sepete Eklendi', `${p.name} sepete eklendi.`);
+                  }} style={styles.btnFeaturedAdd}>
                     <Ionicons name="add-circle" size={10} color="#fff" style={{ marginRight: 2 }} />
                     <Text style={styles.btnFeaturedAddText}>Sepete Ekle</Text>
                   </TouchableOpacity>
@@ -608,9 +855,11 @@ export default function HomeScreen() {
 
             <View style={styles.opportunityRow}>
               <View style={styles.opportunityProduct}>
-                <View style={styles.opportunityProductAvatar}>
-                  <Ionicons name="shirt-outline" size={20} color="#0d9488" />
-                </View>
+                <Image 
+                  source={{ uri: getImageUrl('/static/images/pamuklu eşofman.png.png', activeApiUrl) }} 
+                  style={styles.opportunityProductImage} 
+                  resizeMode="contain"
+                />
                 <Text style={styles.opportunityProductName}>Pamuklu Eşofman</Text>
                 <Text style={styles.opportunityProductPrice}>1498.98 TL</Text>
               </View>
@@ -618,9 +867,11 @@ export default function HomeScreen() {
               <Text style={styles.plusSign}>+</Text>
 
               <View style={styles.opportunityProduct}>
-                <View style={styles.opportunityProductAvatar}>
-                  <Ionicons name="shirt" size={20} color="#0d9488" />
-                </View>
+                <Image 
+                  source={{ uri: getImageUrl('/static/images/slım fit gömlek.png.png', activeApiUrl) }} 
+                  style={styles.opportunityProductImage} 
+                  resizeMode="contain"
+                />
                 <Text style={styles.opportunityProductName}>Slim Fit Gömlek</Text>
                 <Text style={styles.opportunityProductPrice}>1213.94 TL</Text>
               </View>
@@ -683,23 +934,34 @@ export default function HomeScreen() {
                 <Ionicons name="list-sharp" size={14} color="#fff" style={{ marginRight: 6 }} />
                 <Text style={styles.columnHeaderTitle}>TÜM ÜRÜNLER</Text>
               </View>
-              {getFilteredProducts().length === 0 ? (
+              {getGroupedProducts().length === 0 ? (
                 <Text style={styles.emptyColText}>Ürün bulunamadı.</Text>
               ) : (
-                getFilteredProducts().map((product) => (
-                  <View key={product.id} style={styles.productCard}>
-                    <View style={styles.productCardLeft}>
-                      <View style={styles.productAvatarSmall}>
-                        <Ionicons name="cube-outline" size={18} color="#7c3aed" />
-                      </View>
-                      <View style={styles.productInfoSmall}>
-                        <Text style={styles.productNameSmall} numberOfLines={1}>{product.name}</Text>
-                        <Text style={styles.productPriceSmall}>{parseFloat(product.price).toFixed(2)} TL</Text>
-                      </View>
+                getGroupedProducts().map((group, gIdx) => (
+                  <View key={gIdx} style={{ marginBottom: 10 }}>
+                    <View style={styles.categoryHeaderCard}>
+                      <Text style={styles.categoryHeaderText}>{group.label}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => addToCart(product)} style={[styles.btnAddSmall, { backgroundColor: '#10b981' }]}>
-                      <Ionicons name="add" size={16} color="#fff" />
-                    </TouchableOpacity>
+                    {group.products.map((product) => (
+                      <View key={product.id} style={[styles.productCard, { marginBottom: 6 }]}>
+                        <View style={styles.productCardLeft}>
+                          <Image 
+                            source={{ uri: getImageUrl(product.image_url, activeApiUrl) }} 
+                            style={styles.productImageSmall} 
+                          />
+                          <View style={styles.productInfoSmall}>
+                            <Text style={styles.productNameSmall} numberOfLines={1}>{cleanProductName(product.name)}</Text>
+                            <Text style={styles.productPriceSmall}>{parseFloat(product.price).toFixed(2)} TL</Text>
+                          </View>
+                        </View>
+                        <TouchableOpacity onPress={() => {
+                          addToCart(product);
+                          Alert.alert('Sepete Eklendi', `${cleanProductName(product.name)} sepete eklendi.`);
+                        }} style={[styles.btnAddSmall, { backgroundColor: '#10b981' }]}>
+                          <Ionicons name="add" size={16} color="#fff" />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
                   </View>
                 ))
               )}
@@ -722,48 +984,49 @@ export default function HomeScreen() {
       )}
 
       {/* 5. Yüzen Sepetim Butonu */}
-      {cartItems.length > 0 && (
-        <TouchableOpacity onPress={() => { setIsCartOpen(true); setIsPaid(false); setSelectedBasket(null); }} style={styles.floatingCartBtn}>
-          <Ionicons name="basket" size={18} color="#fff" style={{ marginRight: 6 }} />
-          <Text style={styles.floatingCartText}>Özel Sepetim ({cartItems.reduce((acc, item) => acc + item.quantity, 0)})</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity onPress={() => { setIsCartOpen(true); setIsPaid(false); setSelectedBasket(null); }} style={styles.floatingCartBtn}>
+        <Ionicons name="basket" size={18} color="#fff" style={{ marginRight: 6 }} />
+        <Text style={styles.floatingCartText}>Sepetim ({cartItems.reduce((acc, item) => acc + item.quantity, 0)})</Text>
+      </TouchableOpacity>
 
       {/* MODAL 1: PROFIL MODALI */}
-      <Modal visible={isProfileOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.bottomSheet}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>👤 Profil Bilgilerim</Text>
-              <TouchableOpacity onPress={() => setIsProfileOpen(false)}>
-                <Ionicons name="close-circle-sharp" size={24} color="#9ca3af" />
-              </TouchableOpacity>
-            </View>
-            <ScrollView contentContainerStyle={styles.modalScroll}>
-              <Text style={styles.formLabel}>Ad Soyad</Text>
-              <TextInput value={profileName} onChangeText={setProfileName} style={styles.formInput} />
-              
-              <Text style={styles.formLabel}>E-posta</Text>
-              <TextInput value={profileEmail} onChangeText={setProfileEmail} style={styles.formInput} keyboardType="email-address" />
-              
-              <Text style={styles.formLabel}>Telefon</Text>
-              <TextInput value={profilePhone} onChangeText={setProfilePhone} style={styles.formInput} keyboardType="phone-pad" />
-              
-              <Text style={styles.formLabel}>Teslimat Adresi</Text>
-              <TextInput value={profileAddress} onChangeText={setProfileAddress} style={styles.formInput} multiline numberOfLines={3} />
-              
-              <TouchableOpacity onPress={handleSaveProfile} style={styles.btnPayAction}>
-                <Text style={styles.btnPayActionText}>Bilgileri Kaydet</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
+      {/* MODAL 1: PROFIL MODALI */}
+      <Modal visible={isProfileOpen} animationType="fade" transparent>
+        {isProfileOpen && (
+          <View style={styles.modalOverlay}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.bottomSheet}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>👤 Profil Bilgilerim</Text>
+                <TouchableOpacity onPress={() => setIsProfileOpen(false)}>
+                  <Ionicons name="close-circle-sharp" size={24} color="#9ca3af" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView contentContainerStyle={styles.modalScroll}>
+                <Text style={styles.formLabel}>Ad Soyad</Text>
+                <TextInput value={profileName} onChangeText={setProfileName} style={styles.formInput} />
+                
+                <Text style={styles.formLabel}>E-posta</Text>
+                <TextInput value={profileEmail} onChangeText={setProfileEmail} style={styles.formInput} keyboardType="email-address" />
+                
+                <Text style={styles.formLabel}>Telefon</Text>
+                <TextInput value={profilePhone} onChangeText={setProfilePhone} style={styles.formInput} keyboardType="phone-pad" />
+                
+                <Text style={styles.formLabel}>Teslimat Adresi</Text>
+                <TextInput value={profileAddress} onChangeText={setProfileAddress} style={styles.formInput} multiline numberOfLines={3} />
+                
+                <TouchableOpacity onPress={handleSaveProfile} style={styles.btnPayAction}>
+                  <Text style={styles.btnPayActionText}>Bilgileri Kaydet</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
+        )}
       </Modal>
 
       {/* MODAL 2: GEÇMİŞ SİPARİŞLERİM MODALI */}
-      <Modal visible={isHistoryOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
+      <Modal visible={isHistoryOpen} animationType="fade" transparent={false}>
+        {isHistoryOpen && (
+          <View style={styles.fullscreenModalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>📜 Geçmiş Siparişlerim</Text>
               <TouchableOpacity onPress={() => setIsHistoryOpen(false)}>
@@ -771,10 +1034,10 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
             <ScrollView contentContainerStyle={styles.modalScroll}>
-              {pastOrders.length === 0 ? (
+              {getMappedOrders().length === 0 ? (
                 <Text style={styles.emptyText}>Henüz siparişiniz bulunmamaktadır.</Text>
               ) : (
-                pastOrders.map((order, idx) => (
+                getMappedOrders().map((order, idx) => (
                   <View key={order.id || idx} style={styles.orderHistoryCard}>
                     <View style={styles.orderHistoryHeader}>
                       <Text style={styles.orderHistoryId}>{order.id} ({order.date})</Text>
@@ -792,13 +1055,13 @@ export default function HomeScreen() {
               )}
             </ScrollView>
           </View>
-        </View>
+        )}
       </Modal>
 
       {/* MODAL 3: KUPONLARIM MODALI */}
-      <Modal visible={isCouponsOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
+      <Modal visible={isCouponsOpen} animationType="fade" transparent={false}>
+        {isCouponsOpen && (
+          <View style={styles.fullscreenModalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>🎟️ Aktif Kuponlarım</Text>
               <TouchableOpacity onPress={() => setIsCouponsOpen(false)}>
@@ -824,13 +1087,13 @@ export default function HomeScreen() {
               ))}
             </ScrollView>
           </View>
-        </View>
+        )}
       </Modal>
 
       {/* MODAL 4: SIPARIS TAKIBI MODALI */}
-      <Modal visible={isTrackingOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
+      <Modal visible={isTrackingOpen} animationType="fade" transparent={false}>
+        {isTrackingOpen && (
+          <View style={styles.fullscreenModalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>🧭 Sipariş Takibi</Text>
               <TouchableOpacity onPress={() => setIsTrackingOpen(false)}>
@@ -838,14 +1101,14 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
             <ScrollView contentContainerStyle={styles.modalScroll}>
-              {pastOrders.filter(o => o.status !== 'Teslim Edildi').length === 0 ? (
+              {getMappedOrders().filter(o => o.status !== 'Teslim Edildi').length === 0 ? (
                 <View style={styles.successContainer}>
                   <Ionicons name="checkmark-done-circle" size={64} color="#10b981" />
                   <Text style={styles.successTitle}>Aktif Sipariş Yok</Text>
                   <Text style={styles.successDesc}>Tüm siparişleriniz teslim edilmiştir ya da henüz yeni bir sipariş vermediniz.</Text>
                 </View>
               ) : (
-                pastOrders.filter(o => o.status !== 'Teslim Edildi').map((order, idx) => {
+                getMappedOrders().filter(o => o.status !== 'Teslim Edildi').map((order, idx) => {
                   const currentStep = order.status === 'Hazırlanıyor' ? 1 : order.status === 'Yolda' ? 2 : 3;
                   return (
                     <View key={order.id || idx} style={styles.trackingCard}>
@@ -883,13 +1146,13 @@ export default function HomeScreen() {
               )}
             </ScrollView>
           </View>
-        </View>
+        )}
       </Modal>
 
       {/* MODAL 5: SEPETIM MODALI (Floating Cart Clicked) */}
-      <Modal visible={isCartOpen} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.bottomSheet}>
+      <Modal visible={isCartOpen} animationType="fade" transparent={false}>
+        {isCartOpen && (
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fullscreenModalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>🛒 Alışveriş Sepetim</Text>
               <TouchableOpacity onPress={() => setIsCartOpen(false)}>
@@ -912,8 +1175,12 @@ export default function HomeScreen() {
               <ScrollView contentContainerStyle={styles.modalScroll}>
                 {cartItems.map((item) => (
                   <View key={item.product.id} style={styles.cartItemRow}>
-                    <View style={{ flex: 2 }}>
-                      <Text style={styles.cartItemName}>{item.product.name}</Text>
+                    <Image 
+                      source={{ uri: getImageUrl(item.product.image_url, activeApiUrl) }} 
+                      style={styles.cartItemImage} 
+                    />
+                    <View style={{ flex: 2, marginLeft: 10 }}>
+                      <Text style={styles.cartItemName}>{cleanProductName(item.product.name)}</Text>
                       <Text style={styles.cartItemPrice}>{parseFloat(item.product.price).toFixed(2)} TL</Text>
                     </View>
                     <View style={styles.qtyContainer}>
@@ -996,13 +1263,13 @@ export default function HomeScreen() {
               </ScrollView>
             )}
           </KeyboardAvoidingView>
-        </View>
+        )}
       </Modal>
 
       {/* MODAL 6: RECOMENDED BASKET CHECKOUT MODAL */}
-      <Modal visible={checkoutModalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.bottomSheet}>
+      <Modal visible={checkoutModalVisible} animationType="slide" transparent={false}>
+        {checkoutModalVisible && (
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.fullscreenModalContainer}>
             <View style={styles.modalHeader}>
               <View>
                 <Text style={styles.modalTitle}>🛍️ Güvenli Satın Alım</Text>
@@ -1056,7 +1323,7 @@ export default function HomeScreen() {
               </ScrollView>
             )}
           </KeyboardAvoidingView>
-        </View>
+        )}
       </Modal>
 
       {/* MODAL 7: LOKASYON & NAVİGASYON MODALI */}
@@ -1337,6 +1604,21 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 0.5,
   },
+  categoryHeaderCard: {
+    backgroundColor: '#faf5ff',
+    borderLeftWidth: 3,
+    borderLeftColor: '#7c3aed',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    marginBottom: 8,
+    marginTop: 12,
+  },
+  categoryHeaderText: {
+    color: '#6b21a8',
+    fontWeight: '800',
+    fontSize: 12,
+  },
   // Product Card Small (Left Column)
   productCard: {
     backgroundColor: '#fff',
@@ -1368,6 +1650,12 @@ const styles = StyleSheet.create({
     borderColor: '#e9d5ff',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 8,
+  },
+  productImageSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
     marginRight: 8,
   },
   productInfoSmall: {
@@ -1469,6 +1757,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 2,
   },
+  productAvatarImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e9d5ff',
+    marginBottom: 2,
+  },
   visualProductName: {
     fontSize: 7,
     fontWeight: '600',
@@ -1556,7 +1853,7 @@ const styles = StyleSheet.create({
   // Floating Cart Button
   floatingCartBtn: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 85,
     right: 20,
     backgroundColor: '#6b21a8',
     paddingHorizontal: 20,
@@ -1581,6 +1878,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'flex-end',
+  },
+  fullscreenModalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'ios' ? 48 : 20,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   bottomSheet: {
     backgroundColor: '#fff',
@@ -1827,6 +2131,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#f3e8ff',
+  },
+  cartItemImage: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
   },
   cartItemName: {
     fontSize: 12,
@@ -2130,6 +2439,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
   },
+  featuredProductImage: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 6,
+  },
   featuredProductName: {
     fontSize: 10,
     fontWeight: '700',
@@ -2189,6 +2507,15 @@ const styles = StyleSheet.create({
     borderColor: '#ccfbf1',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 4,
+  },
+  opportunityProductImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccfbf1',
     marginBottom: 4,
   },
   opportunityProductName: {

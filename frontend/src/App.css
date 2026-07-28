@@ -182,3 +182,87 @@
     border-right-color: var(--border);
   }
 }
+
+/* Authentication Page Styles */
+.auth-fullscreen-container {
+  background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  overflow: hidden;
+}
+
+.auth-glass-card {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+.auth-glass-card h2,
+.auth-glass-card h3,
+.auth-glass-card label,
+.auth-glass-card p,
+.auth-glass-card span {
+  color: #f8fafc;
+}
+
+.auth-glass-card input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+  transition: all 0.3s ease;
+}
+
+.auth-glass-card input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.auth-glass-card input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #a855f7 !important;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15) !important;
+}
+
+.auth-glass-card .bg-red-50 {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+
+.auth-glass-card .bg-green-50 {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #a7f3d0 !important;
+}
+
+.auth-glass-card .bg-purple-50\/60 {
+  background: rgba(168, 85, 247, 0.1) !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+  color: #e9d5ff !important;
+}
+
+/* Animations */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+.animate-blob {
+  animation: blob 10s infinite alternate;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}

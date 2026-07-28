@@ -20,9 +20,22 @@ const { width } = Dimensions.get('window');
 const getAutoDiscoverIp = () => {
   const hostUri = Constants.expoConfig?.hostUri; // e.g. "192.168.1.35:8081"
   if (hostUri) {
-    return hostUri.split(':')[0];
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return ip;
+    }
   }
-  return '192.168.1.100'; // Default developer fallback IP
+  return '10.95.236.200'; // Default developer fallback IP
+};
+
+// Safe Fetch with Timeout Helper
+const fetchWithTimeout = (url: string, options: any = {}, timeout = 5000) => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Network timeout')), timeout)
+    )
+  ]) as Promise<Response>;
 };
 
 export default function ExploreScreen() {
@@ -42,7 +55,7 @@ export default function ExploreScreen() {
     setIsReportLoading(true);
     
     // Fetch association rules
-    fetch(`${activeApiUrl}/analyze/`)
+    fetchWithTimeout(`${activeApiUrl}/analyze/`)
       .then(res => res.json())
       .then(data => {
         // Take top 6 association rules
@@ -56,7 +69,7 @@ export default function ExploreScreen() {
       });
 
     // Fetch AI Strategic Report
-    fetch(`${activeApiUrl}/ai_report/`)
+    fetchWithTimeout(`${activeApiUrl}/ai_report/`)
       .then(res => res.json())
       .then(data => {
         if (data && data.report) {

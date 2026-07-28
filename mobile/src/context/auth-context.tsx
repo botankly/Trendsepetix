@@ -6,9 +6,12 @@ import Constants from 'expo-constants';
 const getAutoDiscoverIp = () => {
   const hostUri = Constants.expoConfig?.hostUri;
   if (hostUri) {
-    return hostUri.split(':')[0];
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return ip;
+    }
   }
-  return '192.168.1.100'; // Default developer fallback IP
+  return '10.95.236.200'; // Default developer fallback IP
 };
 
 const API_URL = `http://${getAutoDiscoverIp()}:8000/api`;

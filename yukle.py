@@ -2,7 +2,9 @@ import os, django, random
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'trend_projesi.settings')
 django.setup()
 from myapp.models import Product, Sale
+from django.db import transaction
 
+@transaction.atomic
 def mantikli_veri_yukle():
     print("Eski veriler temizleniyor...")
     Sale.objects.all().delete()
@@ -13,54 +15,119 @@ def mantikli_veri_yukle():
         "Teknoloji Mağazası": {
             "marketler": ["Vatan", "MediaMarkt", "Teknosa", "Amazon Loft"],
             "urunler": [
-                ("Laptop", 28000, "1 Adet", "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300"),
-                ("Akıllı Saat", 5500, "1 Adet", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"),
-                ("Kulaklık", 3200, "1 Adet", "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300"),
-                ("Gaming Mouse", 1900, "1 Adet", "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300"),
-                ("Tablet", 16000, "1 Adet", "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300"),
-                ("Bilgisayar Çantası", 1200, "1 Adet", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300"),
-                ("Mekanik Klavye", 2500, "1 Adet", "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=300"),
-                ("USB Bellek 64GB", 350, "1 Adet", "https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=300"),
-                ("Hızlı Şarj Kablosu", 250, "1 Adet", "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300"),
-                ("Powerbank 20000mAh", 950, "1 Adet", "https://images.unsplash.com/photo-1609100411649-7c8799982442?w=300")
+                ("Laptop", 28000, "1 Adet", "/static/images/laptop.png.png"),
+                ("Akıllı Saat", 5500, "1 Adet", "/static/images/saat.png.png"),
+                ("Kulaklık", 3200, "1 Adet", "/static/images/kulaklık.png.png"),
+                ("Gaming Mouse", 1900, "1 Adet", "/static/images/mouse(fare).png.png"),
+                ("Tablet", 16000, "1 Adet", "/static/images/tablet.png.png"),
+                ("Powerbank", 950, "1 Adet", "/static/images/powerbank.png.png"),
+                ("Airpods", 3500, "1 Adet", "/static/images/airpods.png.png"),
+                ("Drone", 25000, "1 Adet", "/static/images/drone.png.jpg"),
+                ("Robot Süpürge", 14000, "1 Adet", "/static/images/robotsupurge.png.jpg"),
+                ("Hoparlör", 4500, "1 Adet", "/static/images/hoparlor.png.webp"),
+                ("Telefon", 48000, "1 Adet", "/static/images/telefon.png.png")
             ]
         },
         "Moda & Giyim": {
             "marketler": ["ZARA", "Boyner", "H&M", "Mavi", "LC Waikiki"],
             "urunler": [
-                ("Yün Kazak", 950, "1 Adet", "https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?w=300"),
-                ("Kışlık Mont", 4200, "1 Adet", "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=300"),
-                ("Spor Ayakkabı", 3200, "1 Adet", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"),
-                ("Pamuklu Eşofman", 1400, "1 Adet", "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300"),
-                ("Deri Kemer", 750, "1 Adet", "https://images.unsplash.com/photo-1624222247344-550fb8ec5522?w=300"),
-                ("Beyaz Tişört", 450, "1 Adet", "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300"),
-                ("Jean Pantolon", 1200, "1 Adet", "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300"),
-                ("Bez Çanta", 150, "1 Adet", "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300"),
-                ("Şık Gömlek", 1100, "1 Adet", "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300"),
-                ("Kışlık Atkı", 350, "1 Adet", "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=300")
+                ("Slim Fit Gömlek", 1100, "1 Adet", "/static/images/slım fit gömlek.png.png"),
+                ("Yün Atkı", 350, "1 Adet", "/static/images/yün atkı.png.png"),
+                ("Yün Kazak", 950, "1 Adet", "/static/images/yün kazak 1 adet.png.png"),
+                ("Pamuklu Eşofman", 1400, "1 Adet", "/static/images/pamuklu eşofman.png.png"),
+                ("Pamuklu Sweatshirt", 1250, "1 Adet", "/static/images/pamuklu sweatshort.png.png"),
+                ("Chino Pantolon", 1200, "1 Adet", "/static/images/chino pantolon.png.png"),
+                ("Jean Pantolon", 1200, "1 Adet", "/static/images/jean pantolon.png.png"),
+                ("Deri Bot", 3200, "1 Çift", "/static/images/deri bot.png.png"),
+                ("Çorap", 120, "1 Adet", "/static/images/corap.png.webp"),
+                ("Terlik", 450, "1 Çift", "/static/images/terlik.png.jpg")
             ]
         },
         "Market & Gıda": {
             "marketler": ["Migros", "Carrefour", "BİM", "ŞOK", "Tarım Kredi"],
             "urunler": [
-                ("Pilavlık Pirinç", 65, "1 Kg", "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300"),
-                ("Kırmızı Mercimek", 55, "1 Kg", "https://images.unsplash.com/photo-1515942400420-2b98fed1f515?w=300"),
-                ("Dana Kıyma", 540, "1 Kg", "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=300"),
-                ("Süzme Çiçek Balı", 320, "1 Adet", "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=300"),
-                ("Spagetti Makarna", 25, "1 Adet", "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=300"),
-                ("Domates", 45, "1 Kg", "https://images.unsplash.com/photo-1546473427-e1ad6c448144?w=300"),
-                ("Bebek Bezi (Dev Paket)", 450, "1 Adet", "https://images.unsplash.com/photo-1595433707802-68267d83760a?w=300"),
-                ("Diş Macunu (Beyazlatıcı)", 85, "1 Adet", "https://images.unsplash.com/photo-1559591931-98939b7f5bd8?w=300"),
-                ("Yumuşak Diş Fırçası", 45, "1 Adet", "https://images.unsplash.com/photo-1559591901-789a7f34be64?w=300"),
-                ("Oyuncak Ayıcık", 350, "1 Adet", "https://images.unsplash.com/photo-1559440666-302a4866380c?w=300"),
-                ("Oyuncak Araba", 150, "1 Adet", "https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=300"),
-                ("Muz (İthal)", 110, "1 Kg", "https://images.unsplash.com/photo-1571771894821-ad9958a35c47?w=300"),
-                ("Kırmızı Elma", 35, "1 Kg", "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=300"),
-                ("Sulu Armut", 40, "1 Kg", "https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?w=300"),
-                ("Taze Maydanoz", 10, "1 Demet", "https://images.unsplash.com/photo-1533604195157-8fbd74753004?w=300"),
-                ("Tam Yağlı Yoğurt", 85, "1.5 Kg", "https://images.unsplash.com/photo-1584273143981-42107ad61029?w=300"),
-                ("Siyah Zeytin", 160, "500 Gr", "https://images.unsplash.com/photo-1526470494896-7e77ba05cf94?w=300"),
-                ("Tam Buğday Ekmek", 25, "1 Adet", "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300")
+                ("Pilavlık Pirinç", 65, "1 Kg", "/static/images/pilavlık pirinç 1 kg.png.png"),
+                ("Kırmızı Mercimek", 55, "1 Kg", "/static/images/kırmızı mercimek 1 kg.png.png"),
+                ("Dana Kıyma", 540, "1 Kg", "/static/images/dana kıyma 1 kg.png.png"),
+                ("Dana Kuşbaşı", 580, "1 Kg", "/static/images/dana kuşbaşı 1kg.pmg.png"),
+                ("Ayçiçek Yağı", 140, "2 Lt", "/static/images/ayçiçek yağı 2 lt.png.png"),
+                ("Beyaz Peynir", 130, "500 Gr", "/static/images/beyaz peynir 500 gr.png.png"),
+                ("Kaşar Peyniri", 160, "400 Gr", "/static/images/tam yağlı kaşar peyniri 400 gr.png.png"),
+                ("Tam Yağlı Süt", 35, "1 Lt", "/static/images/tam yağlı süt 1lt.png.png"),
+                ("Yarım Yağlı Süt", 30, "1 Lt", "/static/images/yarım yağlı süt 1 lt.png.png"),
+                ("Tavuk Göğsü", 180, "1 Kg", "/static/images/tavuk göğsü 1 kg.png.png"),
+                ("Yumurta", 75, "15 li", "/static/images/ymurta 15 li.png.png"),
+                ("Toz Şeker", 45, "1 Kg", "/static/images/toz şeker 1 kg.png.png"),
+                ("Spagetti Makarna", 25, "1 Adet", "/static/images/spagetti makarna.png.png"),
+                ("Domates", 45, "1 Kg", "/static/images/domates 1 kg.png.png"),
+                ("Salkım Domates", 55, "1 Kg", "/static/images/salkım domates 1 kg.png.png"),
+                ("Salatalık", 30, "1 Kg", "/static/images/salatalık.png.png"),
+                ("Çengelköy Salatalık", 45, "1 Kg", "/static/images/çengeköy salatalık 1kg.png.png"),
+                ("Soğan", 20, "1 Kg", "/static/images/sogan.png.webp"),
+                ("Patates", 25, "1 Kg", "/static/images/patates.png.jpg"),
+                ("Patlıcan", 40, "1 Kg", "/static/images/patlıcan.png.png"),
+                ("Kabak", 35, "1 Kg", "/static/images/kabak.png.png"),
+                ("Biber", 50, "1 Kg", "/static/images/bıber.png.png"),
+                ("Muz (İthal)", 110, "1 Kg", "/static/images/portakal.png.png"),
+                ("Portakal", 35, "1 Kg", "/static/images/portakal.png.png"),
+                ("Çilek", 80, "1 Kg", "/static/images/cılek.png.png"),
+                ("Karpuz", 15, "1 Kg", "/static/images/karpuz.png.png"),
+                ("Kavun", 25, "1 Kg", "/static/images/kavun.png.png"),
+                ("Kayısı", 60, "1 Kg", "/static/images/kayısı.png.png"),
+                ("Erik", 50, "1 Kg", "/static/images/erık.png.png"),
+                ("Şeftali", 45, "1 Kg", "/static/images/seftalı.png.png"),
+                ("Üzüm", 55, "1 Kg", "/static/images/uzum.png.png"),
+                ("Karanfil", 30, "1 Paket", "/static/images/karanfıl.png.webp"),
+                ("Nane", 15, "1 Demet", "/static/images/nane.png.webp"),
+                ("Kekik", 20, "1 Paket", "/static/images/kekık.png.jfif"),
+                ("Sumak", 25, "1 Paket", "/static/images/sumak.png.jpg"),
+                ("Kimyon", 20, "1 Paket", "/static/images/kımyon.png.jpg"),
+                ("Karabiber", 25, "1 Paket", "/static/images/karabıber.png.jpg"),
+                ("Su", 10, "1 Adet", "/static/images/su.png.png"),
+                ("Kola", 45, "1 Adet", "/static/images/kola.png.png"),
+                ("Gazoz", 30, "1 Adet", "/static/images/gazoz.png.webp"),
+                ("Şalgam", 35, "1 Adet", "/static/images/salgam.png.png"),
+                ("Kahve", 80, "1 Adet", "/static/images/kahve.png.png"),
+                ("Çikolata", 25, "1 Adet", "/static/images/cıkolata.png.jpg"),
+                ("Bisküvi", 20, "1 Adet", "/static/images/bıskuvı.png.jpg"),
+                ("Kraker", 15, "1 Adet", "/static/images/kraker.png.avif"),
+                ("Kek", 15, "1 Adet", "/static/images/kek.png.jpg"),
+                ("Jelibon", 20, "1 Adet", "/static/images/jelıbon.png.jpg"),
+                ("Lolipop", 10, "1 Adet", "/static/images/lolıop.png.jpg"),
+                ("Sakız", 10, "1 Adet", "/static/images/sakız.png.png"),
+                ("Cips", 25, "1 Adet", "/static/images/cıps.png.webp"),
+                ("Fasulye", 45, "1 Kg", "/static/images/fasulye.png.png"),
+                ("Nohut", 45, "1 Kg", "/static/images/nohut.png.jpg"),
+                ("Pilavlık Bulgur", 40, "1 Kg", "/static/images/pilavlık bulgur 1 kg.png.png"),
+                ("Pul Biber", 25, "1 Paket", "/static/images/pulbıber.png.jpeg"),
+                ("Tarçın", 30, "1 Paket", "/static/images/tarcın.png.jpg")
+            ]
+        },
+        "Temizlik": {
+            "marketler": ["Migros", "Carrefour", "BİM", "ŞOK", "Tarım Kredi"],
+            "urunler": [
+                ("Bulaşık Deterjanı", 85, "1 Adet", "/static/images/bulasıkdeterjanı.png.png"),
+                ("Bulaşık Makinesi Tableti", 220, "30 lu", "/static/images/bulaşık makinesi tableti 30 lu.png.png"),
+                ("Çamaşır Suyu", 45, "1 Adet", "/static/images/camasırsuyu.png.webp"),
+                ("Sıvı Deterjan", 150, "2 Lt", "/static/images/sıvı deterjan 2 lt.png.png"),
+                ("Yüzey Temizleyici", 75, "1 Adet", "/static/images/yüzey temizleyici.png.png"),
+                ("Sıvı Sabun", 40, "1 Adet", "/static/images/sıvısabun.png.webp"),
+                ("Deodorant", 95, "1 Adet", "/static/images/deodorant.png.png"),
+                ("Parfüm", 750, "1 Adet", "/static/images/parfum.png.png"),
+                ("Saç Boyası", 120, "1 Adet", "/static/images/saçboyası.png.jpg"),
+                ("Bulaşık Süngeri", 25, "1 Adet", "/static/images/bulasıksungerı.png.webp"),
+                ("Bulaşık Teli", 20, "1 Adet", "/static/images/bulasıkteli.png.jpg"),
+                ("Kağıt Havlu", 85, "6 lı rulo", "/static/images/kağıt havlu 6 lı rulo.png.png"),
+                ("Tuvalet Kağıdı", 130, "12 li rulo", "/static/images/tuvalet kağıdı 12 li rulo.png.png")
+            ]
+        },
+        "Hobi & Oyuncak": {
+            "marketler": ["Toyzz Shop", "Armağan", "Migros", "D&R"],
+            "urunler": [
+                ("Boyama Kalemi", 75, "1 Paket", "/static/images/boyamakalemı.png.jpeg"),
+                ("Boyama Kitabı", 45, "1 Adet", "/static/images/boyamakıtabı.png.webp"),
+                ("Logo Seti", 650, "1 Adet", "/static/images/logosetı.png.jpg"),
+                ("Puzzle", 250, "1 Adet", "/static/images/puzzle.png.webp")
             ]
         }
     }
@@ -111,7 +178,7 @@ def mantikli_veri_yukle():
         her_tipten_birer = [random.choice(v) for v in tip_bazli_urunler.values()]
         s.products.set(random.sample(her_tipten_birer, min(len(her_tipten_birer), random.randint(3, 5))))
 
-    print("✅ BAŞARILI: Ürün-Mağaza uyumu sağlandı ve birimler eklendi!")
+    print("BASARILI: Urun-Magaza uyumu saglandi ve birimler eklendi!")
 
 if __name__ == "__main__":
     mantikli_veri_yukle()
