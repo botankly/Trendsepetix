@@ -404,33 +404,71 @@ function App() {
 
   // Helper for dynamic image URL fallback
   const getProductImageUrl = (url: string, name = '', category = '') => {
-    if (!url) return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
-    if (url.startsWith('http')) return url;
+    if (url && url.startsWith('http')) return url;
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    // Always use high-quality Unsplash fallbacks in production to guarantee gorgeous, working visuals
     if (!isLocal) {
-      const nameLower = name.toLowerCase();
-      if (nameLower.includes('airpods') || nameLower.includes('kulaklık')) {
-        return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
-      }
-      if (nameLower.includes('saat')) {
-        return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
-      }
-      if (category === 'Teknoloji') {
-        return 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=500';
-      }
-      if (category === 'Giyim & Aksesuar') {
-        return 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=500';
-      }
-      if (category === 'Gıda') {
-        return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
-      }
-      if (category === 'Kişisel Bakım') {
-        return 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500';
-      }
-      if (category === 'Pet Shop') {
-        return 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=500';
-      }
-      return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+      const n = (name || '').toLowerCase();
+      const c = (category || '').toLowerCase();
+
+      // 1. Technology & Electronics
+      if (n.includes('airpods')) return 'https://images.unsplash.com/photo-1588449668338-d151688d3472?w=500';
+      if (n.includes('kulaklık') || n.includes('headphone')) return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
+      if (n.includes('saat') || n.includes('watch')) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+      if (n.includes('laptop') || n.includes('bilgisayar')) return 'https://images.unsplash.com/photo-1496181130204-755241524eab?w=500';
+      if (n.includes('tablet')) return 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500';
+      if (n.includes('telefon') || n.includes('phone')) return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
+      if (n.includes('drone')) return 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=500';
+      if (n.includes('hoparlor') || n.includes('hoparlör') || n.includes('speaker')) return 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500';
+      if (n.includes('powerbank')) return 'https://images.unsplash.com/photo-1609592424109-dd9892f1b17c?w=500';
+      if (n.includes('robotsupurge') || n.includes('süpürge')) return 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=500';
+
+      // 2. Clothing & Accessories
+      if (n.includes('pantolon') || n.includes('jean') || n.includes('chino')) return 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500';
+      if (n.includes('tişört') || n.includes('t-shirt') || n.includes('gömlek') || n.includes('sweatshort') || n.includes('eşofman') || n.includes('kazak') || n.includes('atkı')) return 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500';
+      if (n.includes('bot') || n.includes('ayakkabı') || n.includes('terlik')) return 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=500';
+      if (n.includes('çorap') || n.includes('corap')) return 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=500';
+
+      // 3. Groceries & Food (Fresh)
+      if (n.includes('domates') || n.includes('salatalık') || n.includes('biber') || n.includes('bıber') || n.includes('patates') || n.includes('kabak') || n.includes('patlıcan') || n.includes('sogan') || n.includes('çengeköy') || n.includes('fasulye')) return 'https://images.unsplash.com/photo-1566385101042-1a010c129fae?w=500';
+      if (n.includes('karpuz') || n.includes('kavun') || n.includes('erık') || n.includes('cılek') || n.includes('çilek') || n.includes('kayısı') || n.includes('portakal') || n.includes('seftalı') || n.includes('uzum')) return 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=500';
+      
+      // 4. Dairy & Breakfast
+      if (n.includes('peynir') || n.includes('kaşar')) return 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=500';
+      if (n.includes('yağ') || n.includes('zeytinyağı') || n.includes('ayçiçek')) return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500';
+      if (n.includes('çay') || n.includes('kahve')) return 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500';
+      if (n.includes('süt') || n.includes('sut')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500';
+      if (n.includes('yumurta') || n.includes('ymurta')) return 'https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?w=500';
+
+      // 5. Meat & Poultry
+      if (n.includes('tavuk') || n.includes('kuşbaşı') || n.includes('kıyma') || n.includes('et')) return 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=500';
+
+      // 6. Pantry & Staples
+      if (n.includes('makarna') || n.includes('spagetti') || n.includes('mercimek') || n.includes('bulgur') || n.includes('pirinç') || n.includes('nohut')) return 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500';
+      
+      // 7. Snacks & Drinks
+      if (n.includes('biskuvi') || n.includes('bıskuvı') || n.includes('çikolata') || n.includes('cıkolata') || n.includes('kraker') || n.includes('kek') || n.includes('jelibon') || n.includes('jelıbon') || n.includes('lolıop') || n.includes('lolipop') || n.includes('sakız') || n.includes('cıps') || n.includes('cips')) return 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500';
+      if (n.includes('gazoz') || n.includes('kola') || n.includes('salgam') || n.includes('şalgam') || n.includes('su') || n.includes('içecek')) return 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
+
+      // 8. Cleaning & Care
+      if (n.includes('deterjan') || n.includes('sabun') || n.includes('temizleyici') || n.includes('çamaşırsuyu') || n.includes('camasırsuyu') || n.includes('sıvısabun') || n.includes('deodorant') || n.includes('parfum') || n.includes('şampuan') || n.includes('saçboyası') || n.includes('krem')) return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500';
+      if (n.includes('sunger') || n.includes('sünger') || n.includes('teli') || n.includes('bez') || n.includes('havlu') || n.includes('rulo') || n.includes('kağıt')) return 'https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=500';
+
+      // 9. Spices & Seasoning
+      if (n.includes('sumak') || n.includes('tarcın') || n.includes('tarçın') || n.includes('kımyon') || n.includes('kimyon') || n.includes('nane') || n.includes('karabiber') || n.includes('kekik') || n.includes('karanfil') || n.includes('pulbiber') || n.includes('baharat')) return 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=500';
+
+      // 10. Toys, Hobbies & Pets
+      if (n.includes('puzzle') || n.includes('logo') || n.includes('boyama') || n.includes('kitap') || n.includes('kırtasiye') || n.includes('defter') || n.includes('kalem')) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500';
+      if (n.includes('kedi') || n.includes('köpek') || n.includes('mama') || n.includes('pet')) return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500';
+
+      // General Category-based Fallback
+      if (c === 'teknoloji') return 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=500';
+      if (c === 'giyim & aksesuar') return 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=500';
+      if (c === 'gıda') return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
+      if (c === 'kişisel bakım') return 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500';
+      
+      return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'; // General placeholder
     }
     return `http://127.0.0.1:8000${url}`;
   };
