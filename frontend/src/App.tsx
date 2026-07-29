@@ -201,6 +201,65 @@ function App() {
   // Shopping Cart States
   const [cart, setCart] = useState<any[]>([]);
   const [showCartModal, setShowCartModal] = useState<boolean>(false);
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'checkout'>('cart');
+  const [checkoutForm, setCheckoutForm] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    cardNumber: '',
+    expiry: '',
+    cvv: ''
+  });
+
+  // Product Details & Reviews States
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState<boolean>(false);
+  const [rating, setRating] = useState<number>(5);
+  const [reviewerName, setReviewerName] = useState<string>('');
+  const [reviewText, setReviewText] = useState<string>('');
+  
+  const [productReviews, setProductReviews] = useState<Record<number, any[]>>({
+    1: [
+      { id: 1, author: "Ahmet Y.", rating: 5, text: "Ses kalitesi muazzam, gürültü engellemesi çok başarılı.", date: "2026-07-28" },
+      { id: 2, author: "Merve K.", rating: 4, text: "Tasarımı çok şık ama uzun süre kullanımda kulakları biraz terletiyor.", date: "2026-07-27" }
+    ],
+    2: [
+      { id: 1, author: "Mehmet A.", rating: 5, text: "Ekran parlaklığı ve pil ömrü harika, spor modları çok kullanışlı.", date: "2026-07-25" }
+    ],
+    16: [
+      { id: 1, author: "Can D.", rating: 5, text: "Ele tam oturuyor, tıklama sesi çok sessiz. Ofis kullanımı için ideal.", date: "2026-07-29" }
+    ]
+  });
+
+  const handleOpenProductDetails = (product: any) => {
+    setSelectedProduct(product);
+    setRating(5);
+    setReviewerName(currentUser ? currentUser.username : '');
+    setReviewText('');
+    setShowDetailsModal(true);
+  };
+
+  const handleAddReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProduct) return;
+    if (!reviewerName.trim() || !reviewText.trim()) {
+      alert("Lütfen adınızı ve yorumunuzu girin.");
+      return;
+    }
+    const newReview = {
+      id: Date.now(),
+      author: reviewerName,
+      rating,
+      text: reviewText,
+      date: new Date().toISOString().split('T')[0]
+    };
+    setProductReviews(prev => ({
+      ...prev,
+      [selectedProduct.id]: [newReview, ...(prev[selectedProduct.id] || [])]
+    }));
+    setReviewText('');
+    alert("Yorumunuz başarıyla eklendi!");
+  };
 
   const handleAddToCart = (product: any) => {
     setCart((prevCart) => {
@@ -1369,6 +1428,19 @@ function App() {
                                       <div className="flex items-center gap-2 shrink-0">
                                         <span className={`font-black tabular-nums ${isMatched ? 'text-primary' : 'text-dark'}`}>{p.price} TL</span>
                                         <button
+                                          onClick={() => handleOpenProductDetails({
+                                            id: p.id,
+                                            name: p.name.split(' #')[0],
+                                            price: p.price,
+                                            image: p.image_url || p.image || '',
+                                            category: p.category
+                                          })}
+                                          title="İncele"
+                                          className="w-6 h-6 bg-purple-50 hover:bg-purple-100 text-primary rounded-lg flex items-center justify-center border-none cursor-pointer text-xs font-black transition-all"
+                                        >
+                                          🔍
+                                        </button>
+                                        <button
                                           onClick={() => handleAddToCart({
                                             id: p.id,
                                             name: p.name.split(' #')[0],
@@ -1389,7 +1461,12 @@ function App() {
 
                               <div className="flex justify-between items-center text-[9px] text-gray-400 font-bold uppercase tracking-wider pt-2">
                                 <span>SQL INDEX: ACTIVE</span>
-                                <span className="text-primary hover:underline cursor-pointer">İNCELE</span>
+                                <span 
+                                  onClick={() => sale.products && sale.products.length > 0 && handleOpenProductDetails(sale.products[0])}
+                                  className="text-primary hover:underline cursor-pointer"
+                                >
+                                  İNCELE
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -1578,76 +1655,327 @@ function App() {
       )}
       {/* SHOPPING CART MODAL */}
       {showCartModal && (
-        <div className="fixed inset-0 bg-dark/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fadeIn" onClick={() => setShowCartModal(false)}>
+        <div className="fixed inset-0 bg-dark/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fadeIn" onClick={() => { setShowCartModal(false); setCheckoutStep('cart'); }}>
           <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-purple-50 w-full max-w-[480px] max-h-[85vh] flex flex-col transform transition-transform animate-scaleUp" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-black mb-4 text-dark flex items-center gap-3">
               <span className="bg-purple-100 p-2 rounded-xl text-primary text-sm">🛒</span>
-              Sepetim ({cart.reduce((sum, item) => sum + item.quantity, 0)} Ürün)
+              {checkoutStep === 'cart' ? `Sepetim (${cart.reduce((sum, item) => sum + item.quantity, 0)} Ürün)` : 'Ödeme & Teslimat Bilgileri'}
             </h3>
             
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar my-4">
-              {cart.length > 0 ? (
-                cart.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-xs border border-gray-100 overflow-hidden flex items-center justify-center p-1">
-                      <img src={getProductImageUrl(item.image, item.name, item.category)} alt={item.name} className="max-w-full max-h-full object-contain" />
+            {checkoutStep === 'cart' ? (
+              <>
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar my-4">
+                  {cart.length > 0 ? (
+                    cart.map((item) => (
+                      <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div className="w-12 h-12 rounded-xl bg-white shadow-xs border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+                          <img src={getProductImageUrl(item.image, item.name, item.category)} alt={item.name} className="max-w-full max-h-full object-contain" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-dark truncate leading-tight">{item.name}</h4>
+                          <span className="text-[10px] text-gray-400 font-semibold">{item.category}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => handleUpdateQuantity(item.id, -1)}
+                            className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
+                          >
+                            -
+                          </button>
+                          <span className="text-xs font-black text-dark tabular-nums w-4 text-center">{item.quantity}</span>
+                          <button 
+                            onClick={() => handleUpdateQuantity(item.id, 1)}
+                            className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
+                          >
+                            +
+                          </button>
+                          <button 
+                            onClick={() => setCart(prev => prev.filter(x => x.id !== item.id))}
+                            className="p-1 hover:bg-red-50 text-red-500 rounded-md border-none cursor-pointer flex items-center justify-center text-xs"
+                            title="Sil"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                        <span className="text-xs text-primary font-black whitespace-nowrap min-w-[65px] text-right">
+                          {item.price * item.quantity} TL
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 gap-3">
+                      <span className="text-4xl">🛒</span>
+                      <p className="text-sm text-gray-400 font-bold italic">Sepetiniz boş.</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-bold text-dark truncate leading-tight">{item.name}</h4>
-                      <span className="text-[10px] text-gray-400 font-semibold">{item.category}</span>
+                  )}
+                </div>
+                
+                {cart.length > 0 && (
+                  <div className="border-t border-gray-100 pt-4 mt-2 space-y-3">
+                    <div className="flex justify-between items-center text-sm font-black text-dark">
+                      <span>Toplam Tutar:</span>
+                      <span className="text-primary text-base tabular-nums">
+                        {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)} TL
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => handleUpdateQuantity(item.id, -1)}
-                        className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
-                      >
-                        -
-                      </button>
-                      <span className="text-xs font-black text-dark tabular-nums w-4 text-center">{item.quantity}</span>
-                      <button 
-                        onClick={() => handleUpdateQuantity(item.id, 1)}
-                        className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <span className="text-xs text-primary font-black whitespace-nowrap min-w-[70px] text-right">
-                      {item.price * item.quantity} TL
+                    <button 
+                      onClick={() => setCheckoutStep('checkout')}
+                      className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none"
+                    >
+                      SEPETİ ONAYLA
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (!checkoutForm.name || !checkoutForm.phone || !checkoutForm.address || !checkoutForm.cardNumber || !checkoutForm.expiry || !checkoutForm.cvv) {
+                  alert("Lütfen tüm alanları doldurun.");
+                  return;
+                }
+                alert("Ödemeniz başarıyla alındı ve siparişiniz onaylandı! Bizi tercih ettiğiniz için teşekkür ederiz.");
+                setCart([]);
+                setCheckoutForm({ name: '', phone: '', address: '', cardNumber: '', expiry: '', cvv: '' });
+                setCheckoutStep('cart');
+                setShowCartModal(false);
+              }} className="flex-1 flex flex-col space-y-4 my-2 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-3">
+                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider">Kişisel Bilgiler & Adres</h4>
+                  <input 
+                    type="text" 
+                    placeholder="Adınız Soyadınız" 
+                    value={checkoutForm.name}
+                    onChange={(e) => setCheckoutForm({...checkoutForm, name: e.target.value})}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark"
+                  />
+                  <input 
+                    type="tel" 
+                    placeholder="Telefon Numaranız" 
+                    value={checkoutForm.phone}
+                    onChange={(e) => setCheckoutForm({...checkoutForm, phone: e.target.value})}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark"
+                  />
+                  <textarea 
+                    placeholder="Teslimat Adresi" 
+                    rows={2}
+                    value={checkoutForm.address}
+                    onChange={(e) => setCheckoutForm({...checkoutForm, address: e.target.value})}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark resize-none"
+                  />
+                </div>
+                
+                <div className="space-y-3 pt-2">
+                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider">Kart Bilgileri</h4>
+                  <input 
+                    type="text" 
+                    placeholder="Kart Numarası (16 Hane)" 
+                    maxLength={16}
+                    value={checkoutForm.cardNumber}
+                    onChange={(e) => setCheckoutForm({...checkoutForm, cardNumber: e.target.value.replace(/\D/g, '')})}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input 
+                      type="text" 
+                      placeholder="SKT (AA/YY)" 
+                      maxLength={5}
+                      value={checkoutForm.expiry}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, expiry: e.target.value})}
+                      required
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark text-center"
+                    />
+                    <input 
+                      type="password" 
+                      placeholder="CVV" 
+                      maxLength={3}
+                      value={checkoutForm.cvv}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, cvv: e.target.value.replace(/\D/g, '')})}
+                      required
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark text-center"
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-4 mt-2 space-y-3">
+                  <div className="flex justify-between items-center text-sm font-black text-dark">
+                    <span>Ödenecek Tutar:</span>
+                    <span className="text-primary text-base tabular-nums">
+                      {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)} TL
                     </span>
                   </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <span className="text-4xl">🛒</span>
-                  <p className="text-sm text-gray-400 font-bold italic">Sepetiniz boş.</p>
+                  <div className="flex gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => setCheckoutStep('cart')}
+                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-500 font-extrabold text-xs py-3.5 rounded-2xl border-none cursor-pointer transition-colors"
+                    >
+                      GERİ DÖN
+                    </button>
+                    <button 
+                      type="submit"
+                      className="flex-[2] bg-gradient-to-r from-green-500 to-emerald-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none"
+                    >
+                      ÖDEMEYİ TAMAMLA
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
-            
-            {cart.length > 0 && (
-              <div className="border-t border-gray-100 pt-4 mt-2 space-y-3">
-                <div className="flex justify-between items-center text-sm font-black text-dark">
-                  <span>Toplam Tutar:</span>
-                  <span className="text-primary text-base tabular-nums">
-                    {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)} TL
-                  </span>
-                </div>
-                <button 
-                  onClick={() => {
-                    alert("Siparişiniz Alındı! Bizi tercih ettiğiniz için teşekkür ederiz.");
-                    setCart([]);
-                    setShowCartModal(false);
-                  }}
-                  className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none"
-                >
-                  SİPARİŞİ TAMAMLA
-                </button>
-              </div>
+              </form>
             )}
             
+            {checkoutStep === 'cart' && (
+              <button 
+                onClick={() => { setShowCartModal(false); setCheckoutStep('cart'); }}
+                className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-extrabold text-xs py-3.5 rounded-2xl border-none cursor-pointer transition-colors"
+              >
+                Kapat
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* PRODUCT DETAILS & REVIEW MODAL */}
+      {showDetailsModal && selectedProduct && (
+        <div className="fixed inset-0 bg-dark/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fadeIn" onClick={() => setShowDetailsModal(false)}>
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-purple-50 w-full max-w-[540px] max-h-[85vh] flex flex-col transform transition-transform animate-scaleUp" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <span className="bg-purple-100 px-3 py-1 rounded-full text-primary font-black text-[10px] uppercase">
+                  {selectedProduct.category}
+                </span>
+                <h3 className="text-xl font-black text-dark mt-2 leading-tight">
+                  {selectedProduct.name}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setShowDetailsModal(false)}
+                className="text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar my-4">
+              {/* Product Info & Visual */}
+              <div className="flex gap-4 p-4 bg-gray-50 rounded-3xl border border-gray-100">
+                <div className="w-24 h-24 rounded-2xl bg-white shadow-xs border border-gray-100 overflow-hidden flex items-center justify-center p-2 shrink-0">
+                  <img 
+                    src={getProductImageUrl(selectedProduct.image, selectedProduct.name, selectedProduct.category)} 
+                    alt={selectedProduct.name} 
+                    className="max-w-full max-h-full object-contain" 
+                  />
+                </div>
+                <div className="flex flex-col justify-between py-1">
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Birim Fiyatı</p>
+                    <p className="text-2xl font-black text-primary">{selectedProduct.price} TL</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleAddToCart(selectedProduct);
+                      alert(`${selectedProduct.name} sepete eklendi!`);
+                    }}
+                    className="bg-primary hover:bg-purple-600 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl border-none cursor-pointer transition-colors shadow-md shadow-primary/20"
+                  >
+                    🛒 Sepete Ekle
+                  </button>
+                </div>
+              </div>
+              
+              {/* Review / Puanlama Ekleme Formu */}
+              <div className="bg-purple-50/50 p-5 rounded-3xl border border-purple-100/50 space-y-3">
+                <h4 className="text-xs font-black text-dark uppercase tracking-wider flex items-center gap-1.5">
+                  <span>✍️</span> Yorum Yazın & Puan Verin
+                </h4>
+                <form onSubmit={handleAddReview} className="space-y-3">
+                  {/* Yıldız Puanlama */}
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-gray-500 font-bold mr-1">Puanınız:</span>
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setRating(star)}
+                          className="bg-transparent border-none cursor-pointer text-base focus:outline-none transition-transform active:scale-125 p-0.5"
+                        >
+                          {star <= rating ? '⭐' : '☆'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input 
+                      type="text" 
+                      placeholder="Adınız Soyadınız"
+                      value={reviewerName}
+                      onChange={(e) => setReviewerName(e.target.value)}
+                      required
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark bg-white"
+                    />
+                  </div>
+                  
+                  <textarea 
+                    placeholder="Görüşlerinizi, önerilerinizi veya şikayetlerinizi buraya yazın..."
+                    rows={3}
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold focus:outline-none focus:border-primary text-dark resize-none bg-white"
+                  />
+                  
+                  <button 
+                    type="submit"
+                    className="w-full bg-primary hover:bg-purple-600 text-white font-extrabold text-xs py-2.5 rounded-xl border-none cursor-pointer transition-colors shadow-sm"
+                  >
+                    GÖNDER
+                  </button>
+                </form>
+              </div>
+
+              {/* Yorumlar Listesi */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>💬</span> Müşteri Yorumları ({productReviews[selectedProduct.id]?.length || 0})
+                </h4>
+                
+                <div className="space-y-3">
+                  {productReviews[selectedProduct.id] && productReviews[selectedProduct.id].length > 0 ? (
+                    productReviews[selectedProduct.id].map((rev: any) => (
+                      <div key={rev.id} className="p-3.5 bg-gray-50 rounded-2xl border border-gray-100/80 space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-dark">{rev.author}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">{rev.date}</span>
+                        </div>
+                        <div className="flex text-[10px] gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i}>{i < rev.rating ? '⭐' : '☆'}</span>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium leading-relaxed">
+                          {rev.text}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                      <p className="text-xs text-gray-400 italic font-bold">Bu ürün için henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
             <button 
-              onClick={() => setShowCartModal(false)}
-              className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-extrabold text-xs py-3.5 rounded-2xl border-none cursor-pointer transition-colors"
+              onClick={() => setShowDetailsModal(false)}
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-extrabold text-xs py-3.5 rounded-2xl border-none cursor-pointer transition-colors mt-2"
             >
               Kapat
             </button>
