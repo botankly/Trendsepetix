@@ -433,6 +433,14 @@ function App() {
     if (url && url.startsWith('http')) return url;
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
+    let resolvedUrl = url;
+    if (!resolvedUrl) {
+      const n = (name || '').toLowerCase();
+      if (n.includes('mouse') || n.includes('fare')) resolvedUrl = '/static/images/mouse(fare).png.png';
+      else if (n.includes('termos')) resolvedUrl = '/static/images/termos.png.png';
+      else if (n.includes('sandalye') || n.includes('kamp')) resolvedUrl = '/static/images/kamp sandalyesi.png.png';
+    }
+
     // Always use high-quality Unsplash fallbacks in production to guarantee gorgeous, working visuals
     if (!isLocal) {
       const n = (name || '').toLowerCase();
@@ -440,6 +448,7 @@ function App() {
 
       // 1. Technology & Electronics
       if (n.includes('airpods')) return 'https://images.unsplash.com/photo-1588449668338-d151688d3472?w=500';
+      if (n.includes('mouse') || n.includes('fare')) return 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500';
       if (n.includes('kulaklık') || n.includes('headphone')) return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
       if (n.includes('saat') || n.includes('watch')) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
       if (n.includes('laptop') || n.includes('bilgisayar')) return 'https://images.unsplash.com/photo-1496181130204-755241524eab?w=500';
@@ -488,15 +497,20 @@ function App() {
       if (n.includes('puzzle') || n.includes('logo') || n.includes('boyama') || n.includes('kitap') || n.includes('kırtasiye') || n.includes('defter') || n.includes('kalem')) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500';
       if (n.includes('kedi') || n.includes('köpek') || n.includes('mama') || n.includes('pet')) return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500';
 
+      // 11. Outdoor & Sports
+      if (n.includes('termos')) return 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500';
+      if (n.includes('sandalye') || n.includes('kamp')) return 'https://images.unsplash.com/photo-1596265376427-4688ee0f610f?w=500';
+
       // General Category-based Fallback
       if (c === 'teknoloji') return 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=500';
       if (c === 'giyim & aksesuar') return 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=500';
       if (c === 'gıda') return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
       if (c === 'kişisel bakım') return 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500';
+      if (c === 'spor & outdoor') return 'https://images.unsplash.com/photo-1596265376427-4688ee0f610f?w=500';
       
       return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'; // General placeholder
     }
-    return `http://127.0.0.1:8000${url}`;
+    return `http://127.0.0.1:8000${resolvedUrl}`;
   };
 
   // Trigger Dynamic Gemini API Raporu
