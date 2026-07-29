@@ -436,7 +436,99 @@ function App() {
     let resolvedUrl = url;
     if (!resolvedUrl) {
       const n = (name || '').toLowerCase();
-      if (n.includes('mouse') || n.includes('fare')) resolvedUrl = '/static/images/mouse(fare).png.png';
+      if (n.includes('airpods')) resolvedUrl = '/static/images/airpods.png.png';
+      else if (n.includes('kulaklık') || n.includes('headphone')) resolvedUrl = '/static/images/kulaklık.png.png';
+      else if (n.includes('saat') || n.includes('watch')) resolvedUrl = '/static/images/saat.png.png';
+      else if (n.includes('laptop') || n.includes('bilgisayar') || n.includes('yükseltici')) resolvedUrl = '/static/images/laptop.png.png';
+      else if (n.includes('tablet')) resolvedUrl = '/static/images/tablet.png.png';
+      else if (n.includes('telefon') || n.includes('phone')) resolvedUrl = '/static/images/telefon.png.png';
+      else if (n.includes('drone')) resolvedUrl = '/static/images/drone.png.jpg';
+      else if (n.includes('hoparlor') || n.includes('hoparlör') || n.includes('speaker')) resolvedUrl = '/static/images/hoparlor.png.webp';
+      else if (n.includes('powerbank')) resolvedUrl = '/static/images/powerbank.png.png';
+      else if (n.includes('robotsupurge') || n.includes('süpürge')) resolvedUrl = '/static/images/robotsupurge.png.jpg';
+      else if (n.includes('mouse') || n.includes('fare') || n.includes('klavye')) resolvedUrl = '/static/images/mouse(fare).png.png';
+      
+      else if (n.includes('gömlek') || n.includes('ceket') || n.includes('kemer')) resolvedUrl = '/static/images/slım fit gömlek.png.png';
+      else if (n.includes('tişört') || n.includes('t-shirt') || n.includes('sweatshort') || n.includes('eşofman')) resolvedUrl = '/static/images/pamuklu sweatshort.png.png';
+      else if (n.includes('kazak')) resolvedUrl = '/static/images/yün kazak 1 adet.png.png';
+      else if (n.includes('atkı')) resolvedUrl = '/static/images/yün atkı.png.png';
+      else if (n.includes('bot') || n.includes('ayakkabı')) resolvedUrl = '/static/images/deri bot.png.png';
+      else if (n.includes('terlik')) resolvedUrl = '/static/images/terlik.png.jpg';
+      else if (n.includes('çorap') || n.includes('corap')) resolvedUrl = '/static/images/corap.png.webp';
+      
+      else if (n.includes('pirinç')) resolvedUrl = '/static/images/pilavlık pirinç 1 kg.png.png';
+      else if (n.includes('bulgur')) resolvedUrl = '/static/images/pilavlık bulgur 1 kg.png.png';
+      else if (n.includes('mercimek')) resolvedUrl = '/static/images/kırmızı mercimek 1 kg.png.png';
+      else if (n.includes('tavuk')) resolvedUrl = '/static/images/tavuk göğsü 1 kg.png.png';
+      else if (n.includes('kıyma')) resolvedUrl = '/static/images/dana kıyma 1 kg.png.png';
+      else if (n.includes('kuşbaşı') || n.includes('et')) resolvedUrl = '/static/images/dana kuşbaşı 1kg.pmg.png';
+      else if (n.includes('yağ') || n.includes('zeytinyağı') || n.includes('ayçiçek')) resolvedUrl = '/static/images/ayçiçek yağı 2 lt.png.png';
+      else if (n.includes('peynir')) resolvedUrl = '/static/images/beyaz peynir 500 gr.png.png';
+      else if (n.includes('kaşar')) resolvedUrl = '/static/images/tam yağlı kaşar peyniri 400 gr.png.png';
+      else if (n.includes('süt') || n.includes('sut')) resolvedUrl = '/static/images/tam yağlı süt 1lt.png.png';
+      else if (n.includes('yumurta') || n.includes('ymurta')) resolvedUrl = '/static/images/ymurta 15 li.png.png';
+      
+      else if (n.includes('domates')) resolvedUrl = '/static/images/domates 1 kg.png.png';
+      else if (n.includes('salatalık') || n.includes('çengeköy')) resolvedUrl = '/static/images/salatalık.png.png';
+      else if (n.includes('biber') || n.includes('bıber')) resolvedUrl = '/static/images/bıber.png.png';
+      else if (n.includes('patates')) resolvedUrl = '/static/images/patates.png.jpg';
+      else if (n.includes('patlıcan')) resolvedUrl = '/static/images/patlıcan.png.png';
+      else if (n.includes('kabak')) resolvedUrl = '/static/images/kabak.png.png';
+      else if (n.includes('soğan') || n.includes('sogan')) resolvedUrl = '/static/images/sogan.png.webp';
+      else if (n.includes('muz') || n.includes('bal')) resolvedUrl = '/static/images/muz.png.png';
+      else if (n.includes('portakal')) resolvedUrl = '/static/images/portakal.png.png';
+      else if (n.includes('çilek') || n.includes('cılek')) resolvedUrl = '/static/images/cılek.png.png';
+      else if (n.includes('karpuz')) resolvedUrl = '/static/images/karpuz.png.png';
+      else if (n.includes('kavun')) resolvedUrl = '/static/images/kavun.png.png';
+      else if (n.includes('kayısı')) resolvedUrl = '/static/images/kayısı.png.png';
+      else if (n.includes('erik') || n.includes('erık')) resolvedUrl = '/static/images/erık.png.png';
+      else if (n.includes('şeftali') || n.includes('seftalı')) resolvedUrl = '/static/images/seftalı.png.png';
+      else if (n.includes('üzüm') || n.includes('uzum')) resolvedUrl = '/static/images/uzum.png.png';
+      
+      else if (n.includes('bulaşık makinesi') || n.includes('bulaşık tableti') || n.includes('tablet')) resolvedUrl = '/static/images/bulaşık makinesi tableti 30 lu.png.png';
+      else if (n.includes('bulaşık deterjanı') || n.includes('deterjan')) resolvedUrl = '/static/images/bulasıkdeterjanı.png.png';
+      else if (n.includes('çamaşır suyu') || n.includes('camasırsuyu')) resolvedUrl = '/static/images/camasırsuyu.png.webp';
+      else if (n.includes('sıvı deterjan')) resolvedUrl = '/static/images/sıvı deterjan 2 lt.png.png';
+      else if (n.includes('yüzey temizleyici') || n.includes('yüzey')) resolvedUrl = '/static/images/yüzey temizleyici.png.png';
+      else if (n.includes('sıvı sabun') || n.includes('el sabunu') || n.includes('sabun') || n.includes('sıvısabun')) resolvedUrl = '/static/images/sıvısabun.png.webp';
+      else if (n.includes('deodorant') || n.includes('şampuan') || n.includes('krem') || n.includes('macun') || n.includes('nemlendirici')) resolvedUrl = '/static/images/deodorant.png.png';
+      else if (n.includes('parfüm') || n.includes('parfum')) resolvedUrl = '/static/images/parfum.png.png';
+      else if (n.includes('saç boyası') || n.includes('saçboyası')) resolvedUrl = '/static/images/saçboyası.png.jpg';
+      else if (n.includes('sünger') || n.includes('sunger')) resolvedUrl = '/static/images/bulasıksungerı.png.webp';
+      else if (n.includes('tuvalet kağıdı')) resolvedUrl = '/static/images/tuvalet kağıdı 12 li rulo.png.png';
+      else if (n.includes('kağıt havlu') || n.includes('rulo') || n.includes('bez')) resolvedUrl = '/static/images/kağıt havlu 6 lı rulo.png.png';
+      
+      else if (n.includes('kalem')) resolvedUrl = '/static/images/boyamakalemı.png.jpeg';
+      else if (n.includes('defter')) resolvedUrl = '/static/images/boyamakıtabı.png.webp';
+      else if (n.includes('kitap')) resolvedUrl = '/static/images/boyamakıtabı.png.webp';
+      else if (n.includes('puzzle')) resolvedUrl = '/static/images/puzzle.png.webp';
+      else if (n.includes('logo')) resolvedUrl = '/static/images/logosetı.png.jpg';
+      
+      else if (n.includes('baharat') || n.includes('sumak')) resolvedUrl = '/static/images/sumak.png.jpg';
+      else if (n.includes('tarçın') || n.includes('tarcın')) resolvedUrl = '/static/images/tarcın.png.jpg';
+      else if (n.includes('kimyon') || n.includes('kımyon')) resolvedUrl = '/static/images/kımyon.png.jpg';
+      else if (n.includes('nane')) resolvedUrl = '/static/images/nane.png.webp';
+      else if (n.includes('kekik') || n.includes('kekık')) resolvedUrl = '/static/images/kekık.png.jfif';
+      else if (n.includes('karabiber') || n.includes('karabıber')) resolvedUrl = '/static/images/karabıber.png.jpg';
+      else if (n.includes('karanfil') || n.includes('karanfıl')) resolvedUrl = '/static/images/karanfıl.png.webp';
+      else if (n.includes('pul biber') || n.includes('pulbiber') || n.includes('pulbıber')) resolvedUrl = '/static/images/pulbıber.png.jpeg';
+      
+      else if (n.includes('kola')) resolvedUrl = '/static/images/kola.png.png';
+      else if (n.includes('gazoz')) resolvedUrl = '/static/images/gazoz.png.webp';
+      else if (n.includes('şalgam') || n.includes('salgam')) resolvedUrl = '/static/images/salgam.png.png';
+      else if (n.includes('su')) resolvedUrl = '/static/images/su.png.png';
+      else if (n.includes('kahve') || n.includes('çay')) resolvedUrl = '/static/images/kahve.png.png';
+      else if (n.includes('bisküvi') || n.includes('bıskuvı')) resolvedUrl = '/static/images/bıskuvı.png.jpg';
+      else if (n.includes('çikolata') || n.includes('cıkolata')) resolvedUrl = '/static/images/cıkolata.png.jpg';
+      else if (n.includes('kraker')) resolvedUrl = '/static/images/kraker.png.avif';
+      else if (n.includes('kek')) resolvedUrl = '/static/images/kek.png.jpg';
+      else if (n.includes('jelibon') || n.includes('jelıbon')) resolvedUrl = '/static/images/jelıbon.png.jpg';
+      else if (n.includes('lolipop') || n.includes('lolıop')) resolvedUrl = '/static/images/lolıop.png.jpg';
+      else if (n.includes('sakız') || n.includes('kedi') || n.includes('köpek') || n.includes('mama') || n.includes('kum')) resolvedUrl = '/static/images/sakız.png.png';
+      else if (n.includes('cips') || n.includes('cıps')) resolvedUrl = '/static/images/cıps.png.webp';
+      else if (n.includes('fasulye')) resolvedUrl = '/static/images/fasulye.png.png';
+      else if (n.includes('nohut')) resolvedUrl = '/static/images/nohut.png.jpg';
+      
       else if (n.includes('termos')) resolvedUrl = '/static/images/termos.png.png';
       else if (n.includes('sandalye') || n.includes('kamp')) resolvedUrl = '/static/images/kamp sandalyesi.png.png';
     }
@@ -448,10 +540,10 @@ function App() {
 
       // 1. Technology & Electronics
       if (n.includes('airpods')) return 'https://images.unsplash.com/photo-1588449668338-d151688d3472?w=500';
-      if (n.includes('mouse') || n.includes('fare')) return 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500';
+      if (n.includes('mouse') || n.includes('fare') || n.includes('klavye')) return 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500';
       if (n.includes('kulaklık') || n.includes('headphone')) return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500';
       if (n.includes('saat') || n.includes('watch')) return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
-      if (n.includes('laptop') || n.includes('bilgisayar')) return 'https://images.unsplash.com/photo-1496181130204-755241524eab?w=500';
+      if (n.includes('laptop') || n.includes('bilgisayar') || n.includes('yükseltici')) return 'https://images.unsplash.com/photo-1496181130204-755241524eab?w=500';
       if (n.includes('tablet')) return 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500';
       if (n.includes('telefon') || n.includes('phone')) return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
       if (n.includes('drone')) return 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=500';
@@ -461,7 +553,7 @@ function App() {
 
       // 2. Clothing & Accessories
       if (n.includes('pantolon') || n.includes('jean') || n.includes('chino')) return 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500';
-      if (n.includes('tişört') || n.includes('t-shirt') || n.includes('gömlek') || n.includes('sweatshort') || n.includes('eşofman') || n.includes('kazak') || n.includes('atkı')) return 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500';
+      if (n.includes('tişört') || n.includes('t-shirt') || n.includes('gömlek') || n.includes('sweatshort') || n.includes('eşofman') || n.includes('kazak') || n.includes('atkı') || n.includes('ceket') || n.includes('kemer')) return 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500';
       if (n.includes('bot') || n.includes('ayakkabı') || n.includes('terlik')) return 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=500';
       if (n.includes('çorap') || n.includes('corap')) return 'https://images.unsplash.com/photo-1582966772680-860e372bb558?w=500';
 
@@ -483,11 +575,11 @@ function App() {
       if (n.includes('makarna') || n.includes('spagetti') || n.includes('mercimek') || n.includes('bulgur') || n.includes('pirinç') || n.includes('nohut')) return 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500';
       
       // 7. Snacks & Drinks
-      if (n.includes('biskuvi') || n.includes('bıskuvı') || n.includes('çikolata') || n.includes('cıkolata') || n.includes('kraker') || n.includes('kek') || n.includes('jelibon') || n.includes('jelıbon') || n.includes('lolıop') || n.includes('lolipop') || n.includes('sakız') || n.includes('cıps') || n.includes('cips')) return 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500';
-      if (n.includes('gazoz') || n.includes('kola') || n.includes('salgam') || n.includes('şalgam') || n.includes('su') || n.includes('içecek')) return 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
+      if (n.includes('biskuvi') || n.includes('bıskuvı') || n.includes('çikolata') || n.includes('cıkolata') || n.includes('kraker') || n.includes('kek') || n.includes('jelibon') || n.includes('jelıbon') || n.includes('lolıop') || n.includes('lolipop') || n.includes('sakız')) return 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500';
+      if (n.includes('gazoz') || n.includes('kola') || n.includes('salgam') || n.includes('şalgam') || n.includes('su') || n.includes('içecek') || n.includes('bal')) return 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
 
       // 8. Cleaning & Care
-      if (n.includes('deterjan') || n.includes('sabun') || n.includes('temizleyici') || n.includes('çamaşırsuyu') || n.includes('camasırsuyu') || n.includes('sıvısabun') || n.includes('deodorant') || n.includes('parfum') || n.includes('şampuan') || n.includes('saçboyası') || n.includes('krem')) return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500';
+      if (n.includes('deterjan') || n.includes('sabun') || n.includes('temizleyici') || n.includes('çamaşırsuyu') || n.includes('camasırsuyu') || n.includes('sıvısabun') || n.includes('deodorant') || n.includes('parfum') || n.includes('şampuan') || n.includes('saçboyası') || n.includes('krem') || n.includes('macun') || n.includes('nemlendirici')) return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500';
       if (n.includes('sunger') || n.includes('sünger') || n.includes('teli') || n.includes('bez') || n.includes('havlu') || n.includes('rulo') || n.includes('kağıt')) return 'https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=500';
 
       // 9. Spices & Seasoning
@@ -495,7 +587,7 @@ function App() {
 
       // 10. Toys, Hobbies & Pets
       if (n.includes('puzzle') || n.includes('logo') || n.includes('boyama') || n.includes('kitap') || n.includes('kırtasiye') || n.includes('defter') || n.includes('kalem')) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500';
-      if (n.includes('kedi') || n.includes('köpek') || n.includes('mama') || n.includes('pet')) return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500';
+      if (n.includes('kedi') || n.includes('köpek') || n.includes('mama') || n.includes('pet') || n.includes('kum')) return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500';
 
       // 11. Outdoor & Sports
       if (n.includes('termos')) return 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500';
