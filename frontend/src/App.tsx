@@ -198,6 +198,32 @@ function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'map' | 'charts' | 'discount'>('dashboard');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // Shopping Cart States
+  const [cart, setCart] = useState<any[]>([]);
+  const [showCartModal, setShowCartModal] = useState<boolean>(false);
+
+  const handleAddToCart = (product: any) => {
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item.id === product.id);
+      if (existing) {
+        return prevCart.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
+
+  const handleUpdateQuantity = (productId: number, amount: number) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          item.id === productId ? { ...item, quantity: item.quantity + amount } : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
   // Authentication States
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('web_auth') === 'true';
@@ -432,7 +458,7 @@ function App() {
 
       // 3. Groceries & Food (Fresh)
       if (n.includes('domates') || n.includes('salatalık') || n.includes('biber') || n.includes('bıber') || n.includes('patates') || n.includes('kabak') || n.includes('patlıcan') || n.includes('sogan') || n.includes('çengeköy') || n.includes('fasulye')) return 'https://images.unsplash.com/photo-1566385101042-1a010c129fae?w=500';
-      if (n.includes('karpuz') || n.includes('kavun') || n.includes('erık') || n.includes('cılek') || n.includes('çilek') || n.includes('kayısı') || n.includes('portakal') || n.includes('seftalı') || n.includes('uzum')) return 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=500';
+      if (n.includes('karpuz') || n.includes('kavun') || n.includes('erık') || n.includes('cılek') || n.includes('çilek') || n.includes('kayısı') || n.includes('portakal') || n.includes('seftalı') || n.includes('uzum') || n.includes('muz')) return 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500';
       
       // 4. Dairy & Breakfast
       if (n.includes('peynir') || n.includes('kaşar')) return 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=500';
@@ -972,6 +998,18 @@ function App() {
               </button>
             </div>
 
+            {/* Shopping Cart Button */}
+            <button 
+              onClick={() => setShowCartModal(true)}
+              className="bg-white hover:bg-purple-50 text-primary font-extrabold text-xs px-4 py-2.5 rounded-2xl shadow-sm border border-purple-100 hover:border-purple-200 cursor-pointer transition-all flex items-center gap-2"
+            >
+              <span>🛒</span>
+              <span>Sepetim</span>
+              <span className="bg-primary text-white text-[9px] px-1.5 py-0.5 rounded-full font-black tabular-nums">
+                {cart.reduce((sum, item) => sum + item.quantity, 0)}
+              </span>
+            </button>
+
             {/* User Profile & Logout */}
             <div className="flex items-center gap-2.5 bg-purple-50/50 pl-3 pr-2 py-1.5 rounded-2xl border border-purple-100 shadow-xs">
               <div className="flex flex-col items-end">
@@ -1114,7 +1152,22 @@ function App() {
                             <h4 className="text-xs font-bold text-dark truncate leading-tight">{prod.name}</h4>
                             <span className="text-[10px] text-gray-400 font-semibold">{prod.category}</span>
                           </div>
-                          <span className="text-xs text-primary font-black whitespace-nowrap">{prod.price} TL</span>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-xs text-primary font-black whitespace-nowrap">{prod.price} TL</span>
+                            <button
+                              onClick={() => handleAddToCart({
+                                id: prod.id,
+                                name: prod.name,
+                                price: prod.price,
+                                image: prod.image,
+                                category: prod.category
+                              })}
+                              className="bg-primary/10 hover:bg-primary text-primary hover:text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black transition-all border-none cursor-pointer flex items-center gap-1"
+                              title="Sepete Ekle"
+                            >
+                              <span>➕</span> <span className="hidden sm:inline">Sepete Ekle</span>
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1189,16 +1242,40 @@ function App() {
                                 <h4 className="font-black text-lg text-dark leading-tight">{sale.shop_name}</h4>
                               </div>
 
-                              <div className="space-y-2 mb-4 border-t border-b border-gray-50 py-3">
+                              <div className="space-y-2.5 mb-4 border-t border-b border-gray-50 py-3">
                                 {sale.products?.map((p: any) => {
                                   const isMatched = selectedCategory && p.category === selectedCategory;
                                   return (
-                                    <div key={p.id} className="flex justify-between items-center text-xs">
-                                      <span className={`font-semibold ${isMatched ? 'text-primary font-bold' : 'text-gray-500'}`}>
-                                        {isMatched && <span className="mr-1">🎯</span>}
-                                        {p.name.split(' #')[0]}
-                                      </span>
-                                      <span className={`font-black tabular-nums ${isMatched ? 'text-primary' : 'text-dark'}`}>{p.price} TL</span>
+                                    <div key={p.id} className="flex justify-between items-center text-xs gap-3 p-1 hover:bg-purple-50/30 rounded-xl transition-all">
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+                                          <img 
+                                            src={getProductImageUrl(p.image_url || p.image || '', p.name, p.category)} 
+                                            alt={p.name} 
+                                            className="max-w-full max-h-full object-contain" 
+                                          />
+                                        </div>
+                                        <span className={`font-semibold truncate ${isMatched ? 'text-primary font-bold' : 'text-gray-500'}`}>
+                                          {isMatched && <span className="mr-1">🎯</span>}
+                                          {p.name.split(' #')[0]}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        <span className={`font-black tabular-nums ${isMatched ? 'text-primary' : 'text-dark'}`}>{p.price} TL</span>
+                                        <button
+                                          onClick={() => handleAddToCart({
+                                            id: p.id,
+                                            name: p.name.split(' #')[0],
+                                            price: p.price,
+                                            image: p.image_url || p.image || '',
+                                            category: p.category
+                                          })}
+                                          title="Sepete Ekle"
+                                          className="w-6 h-6 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg flex items-center justify-center border-none cursor-pointer text-xs font-black transition-all"
+                                        >
+                                          ➕
+                                        </button>
+                                      </div>
                                     </div>
                                   );
                                 })}
@@ -1390,6 +1467,84 @@ function App() {
                 RAPORU KAPAT
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* SHOPPING CART MODAL */}
+      {showCartModal && (
+        <div className="fixed inset-0 bg-dark/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fadeIn" onClick={() => setShowCartModal(false)}>
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-purple-50 w-full max-w-[480px] max-h-[85vh] flex flex-col transform transition-transform animate-scaleUp" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-black mb-4 text-dark flex items-center gap-3">
+              <span className="bg-purple-100 p-2 rounded-xl text-primary text-sm">🛒</span>
+              Sepetim ({cart.reduce((sum, item) => sum + item.quantity, 0)} Ürün)
+            </h3>
+            
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar my-4">
+              {cart.length > 0 ? (
+                cart.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-xs border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+                      <img src={getProductImageUrl(item.image, item.name, item.category)} alt={item.name} className="max-w-full max-h-full object-contain" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-dark truncate leading-tight">{item.name}</h4>
+                      <span className="text-[10px] text-gray-400 font-semibold">{item.category}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => handleUpdateQuantity(item.id, -1)}
+                        className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
+                      >
+                        -
+                      </button>
+                      <span className="text-xs font-black text-dark tabular-nums w-4 text-center">{item.quantity}</span>
+                      <button 
+                        onClick={() => handleUpdateQuantity(item.id, 1)}
+                        className="w-5 h-5 bg-gray-200 hover:bg-gray-300 text-dark rounded-md border-none cursor-pointer flex items-center justify-center font-bold text-xs"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="text-xs text-primary font-black whitespace-nowrap min-w-[70px] text-right">
+                      {item.price * item.quantity} TL
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                  <span className="text-4xl">🛒</span>
+                  <p className="text-sm text-gray-400 font-bold italic">Sepetiniz boş.</p>
+                </div>
+              )}
+            </div>
+            
+            {cart.length > 0 && (
+              <div className="border-t border-gray-100 pt-4 mt-2 space-y-3">
+                <div className="flex justify-between items-center text-sm font-black text-dark">
+                  <span>Toplam Tutar:</span>
+                  <span className="text-primary text-base tabular-nums">
+                    {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)} TL
+                  </span>
+                </div>
+                <button 
+                  onClick={() => {
+                    alert("Siparişiniz Alındı! Bizi tercih ettiğiniz için teşekkür ederiz.");
+                    setCart([]);
+                    setShowCartModal(false);
+                  }}
+                  className="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-extrabold text-xs py-3.5 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-98 transition-all cursor-pointer border-none"
+                >
+                  SİPARİŞİ TAMAMLA
+                </button>
+              </div>
+            )}
+            
+            <button 
+              onClick={() => setShowCartModal(false)}
+              className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-500 font-extrabold text-xs py-3.5 rounded-2xl border-none cursor-pointer transition-colors"
+            >
+              Kapat
+            </button>
           </div>
         </div>
       )}

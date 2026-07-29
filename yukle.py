@@ -68,7 +68,7 @@ def mantikli_veri_yukle():
                 ("Patlıcan", 40, "1 Kg", "/static/images/patlıcan.png.png"),
                 ("Kabak", 35, "1 Kg", "/static/images/kabak.png.png"),
                 ("Biber", 50, "1 Kg", "/static/images/bıber.png.png"),
-                ("Muz (İthal)", 110, "1 Kg", "/static/images/portakal.png.png"),
+                ("Muz (İthal)", 110, "1 Kg", "/static/images/muz.png.png"),
                 ("Portakal", 35, "1 Kg", "/static/images/portakal.png.png"),
                 ("Çilek", 80, "1 Kg", "/static/images/cılek.png.png"),
                 ("Karpuz", 15, "1 Kg", "/static/images/karpuz.png.png"),

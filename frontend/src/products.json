@@ -3,55 +3,55 @@
     "id": 1,
     "name": "Airpods",
     "image": "/static/images/airpods.png.png",
-    "price": 262
+    "price": 376
   },
   {
     "id": 2,
     "name": "Ayçiçek Yağı 2 Lt",
     "image": "/static/images/ayçiçek yağı 2 lt.png.png",
-    "price": 268
+    "price": 302
   },
   {
     "id": 3,
     "name": "Beyaz Peynir 500 Gr",
     "image": "/static/images/beyaz peynir 500 gr.png.png",
-    "price": 167
+    "price": 337
   },
   {
     "id": 4,
     "name": "Boyamakalemı",
     "image": "/static/images/boyamakalemı.png.jpeg",
-    "price": 82
+    "price": 452
   },
   {
     "id": 5,
     "name": "Boyamakıtabı",
     "image": "/static/images/boyamakıtabı.png.webp",
-    "price": 165
+    "price": 315
   },
   {
     "id": 6,
     "name": "Bulasıkdeterjanı",
     "image": "/static/images/bulasıkdeterjanı.png.png",
-    "price": 283
+    "price": 286
   },
   {
     "id": 7,
     "name": "Bulasıksungerı",
     "image": "/static/images/bulasıksungerı.png.webp",
-    "price": 202
+    "price": 234
   },
   {
     "id": 8,
     "name": "Bulasıkteli",
     "image": "/static/images/bulasıkteli.png.jpg",
-    "price": 18
+    "price": 484
   },
   {
     "id": 9,
     "name": "Bulaşık Makinesi Tableti 30 Lu",
     "image": "/static/images/bulaşık makinesi tableti 30 lu.png.png",
-    "price": 207
+    "price": 199
   },
   {
     "id": 10,
@@ -63,492 +63,498 @@
     "id": 11,
     "name": "Bıskuvı",
     "image": "/static/images/bıskuvı.png.jpg",
-    "price": 417
+    "price": 296
   },
   {
     "id": 12,
     "name": "Camasırsuyu",
     "image": "/static/images/camasırsuyu.png.webp",
-    "price": 165
+    "price": 81
   },
   {
     "id": 13,
     "name": "Chino Pantolon",
     "image": "/static/images/chino pantolon.png.png",
-    "price": 276
+    "price": 431
   },
   {
     "id": 14,
     "name": "Corap",
     "image": "/static/images/corap.png.webp",
-    "price": 378
+    "price": 117
   },
   {
     "id": 15,
     "name": "Cıkolata",
     "image": "/static/images/cıkolata.png.jpg",
-    "price": 487
+    "price": 86
   },
   {
     "id": 16,
     "name": "Cılek",
     "image": "/static/images/cılek.png.png",
-    "price": 342
+    "price": 46
   },
   {
     "id": 17,
     "name": "Cıps",
     "image": "/static/images/cıps.png.webp",
-    "price": 490
+    "price": 224
   },
   {
     "id": 18,
     "name": "Dana Kuşbaşı 1Kg",
     "image": "/static/images/dana kuşbaşı 1kg.pmg.png",
-    "price": 445
+    "price": 150
   },
   {
     "id": 19,
     "name": "Dana Kıyma 1 Kg",
     "image": "/static/images/dana kıyma 1 kg.png.png",
-    "price": 440
+    "price": 146
   },
   {
     "id": 20,
     "name": "Deodorant",
     "image": "/static/images/deodorant.png.png",
-    "price": 392
+    "price": 477
   },
   {
     "id": 21,
     "name": "Deri Bot",
     "image": "/static/images/deri bot.png.png",
-    "price": 116
+    "price": 232
   },
   {
     "id": 22,
     "name": "Domates 1 Kg",
     "image": "/static/images/domates 1 kg.png.png",
-    "price": 319
+    "price": 370
   },
   {
     "id": 23,
     "name": "Drone",
     "image": "/static/images/drone.png.jpg",
-    "price": 384
+    "price": 30
   },
   {
     "id": 24,
     "name": "Erık",
     "image": "/static/images/erık.png.png",
-    "price": 214
+    "price": 274
   },
   {
     "id": 25,
     "name": "Fasulye",
     "image": "/static/images/fasulye.png.png",
-    "price": 445
+    "price": 292
   },
   {
     "id": 26,
     "name": "Gazoz",
     "image": "/static/images/gazoz.png.webp",
-    "price": 474
+    "price": 189
   },
   {
     "id": 27,
     "name": "Hoparlor",
     "image": "/static/images/hoparlor.png.webp",
-    "price": 75
+    "price": 389
   },
   {
     "id": 28,
     "name": "Jean Pantolon",
     "image": "/static/images/jean pantolon.png.png",
-    "price": 382
+    "price": 272
   },
   {
     "id": 29,
     "name": "Jelıbon",
     "image": "/static/images/jelıbon.png.jpg",
-    "price": 121
+    "price": 480
   },
   {
     "id": 30,
     "name": "Kabak",
     "image": "/static/images/kabak.png.png",
-    "price": 164
+    "price": 121
   },
   {
     "id": 31,
     "name": "Kahve",
     "image": "/static/images/kahve.png.png",
-    "price": 59
+    "price": 414
   },
   {
     "id": 32,
     "name": "Karabıber",
     "image": "/static/images/karabıber.png.jpg",
-    "price": 201
+    "price": 297
   },
   {
     "id": 33,
     "name": "Karanfıl",
     "image": "/static/images/karanfıl.png.webp",
-    "price": 281
+    "price": 22
   },
   {
     "id": 34,
     "name": "Karpuz",
     "image": "/static/images/karpuz.png.png",
-    "price": 154
+    "price": 300
   },
   {
     "id": 35,
     "name": "Kavun",
     "image": "/static/images/kavun.png.png",
-    "price": 64
+    "price": 413
   },
   {
     "id": 36,
     "name": "Kayısı",
     "image": "/static/images/kayısı.png.png",
-    "price": 500
+    "price": 406
   },
   {
     "id": 37,
     "name": "Kağıt Havlu 6 Lı Rulo",
     "image": "/static/images/kağıt havlu 6 lı rulo.png.png",
-    "price": 349
+    "price": 80
   },
   {
     "id": 38,
     "name": "Kek",
     "image": "/static/images/kek.png.jpg",
-    "price": 481
+    "price": 336
   },
   {
     "id": 39,
     "name": "Kekık",
     "image": "/static/images/kekık.png.jfif",
-    "price": 186
+    "price": 87
   },
   {
     "id": 40,
     "name": "Kola",
     "image": "/static/images/kola.png.png",
-    "price": 449
+    "price": 35
   },
   {
     "id": 41,
     "name": "Kraker",
     "image": "/static/images/kraker.png.avif",
-    "price": 259
+    "price": 90
   },
   {
     "id": 42,
     "name": "Kulaklık",
     "image": "/static/images/kulaklık.png.png",
-    "price": 356
+    "price": 248
   },
   {
     "id": 43,
     "name": "Kımyon",
     "image": "/static/images/kımyon.png.jpg",
-    "price": 108
+    "price": 212
   },
   {
     "id": 44,
     "name": "Kırmızı Mercimek 1 Kg",
     "image": "/static/images/kırmızı mercimek 1 kg.png.png",
-    "price": 353
+    "price": 221
   },
   {
     "id": 45,
     "name": "Laptop",
     "image": "/static/images/laptop.png.png",
-    "price": 337
+    "price": 66
   },
   {
     "id": 46,
     "name": "Logosetı",
     "image": "/static/images/logosetı.png.jpg",
-    "price": 356
+    "price": 162
   },
   {
     "id": 47,
     "name": "Lolıop",
     "image": "/static/images/lolıop.png.jpg",
-    "price": 56
+    "price": 437
   },
   {
     "id": 48,
     "name": "Mouse(Fare)",
     "image": "/static/images/mouse(fare).png.png",
-    "price": 423
+    "price": 478
   },
   {
     "id": 49,
-    "name": "Nane",
-    "image": "/static/images/nane.png.webp",
-    "price": 137
+    "name": "Muz",
+    "image": "/static/images/muz.png.png",
+    "price": 463
   },
   {
     "id": 50,
-    "name": "Nohut",
-    "image": "/static/images/nohut.png.jpg",
-    "price": 205
+    "name": "Nane",
+    "image": "/static/images/nane.png.webp",
+    "price": 372
   },
   {
     "id": 51,
-    "name": "Pamuklu Eşofman",
-    "image": "/static/images/pamuklu eşofman.png.png",
-    "price": 116
+    "name": "Nohut",
+    "image": "/static/images/nohut.png.jpg",
+    "price": 271
   },
   {
     "id": 52,
-    "name": "Pamuklu Sweatshort",
-    "image": "/static/images/pamuklu sweatshort.png.png",
-    "price": 379
+    "name": "Pamuklu Eşofman",
+    "image": "/static/images/pamuklu eşofman.png.png",
+    "price": 447
   },
   {
     "id": 53,
-    "name": "Parfum",
-    "image": "/static/images/parfum.png.png",
-    "price": 453
+    "name": "Pamuklu Sweatshort",
+    "image": "/static/images/pamuklu sweatshort.png.png",
+    "price": 495
   },
   {
     "id": 54,
-    "name": "Patates",
-    "image": "/static/images/patates.png.jpg",
-    "price": 27
+    "name": "Parfum",
+    "image": "/static/images/parfum.png.png",
+    "price": 208
   },
   {
     "id": 55,
-    "name": "Patlıcan",
-    "image": "/static/images/patlıcan.png.png",
-    "price": 450
+    "name": "Patates",
+    "image": "/static/images/patates.png.jpg",
+    "price": 211
   },
   {
     "id": 56,
-    "name": "Pilavlık Bulgur 1 Kg",
-    "image": "/static/images/pilavlık bulgur 1 kg.png.png",
-    "price": 111
+    "name": "Patlıcan",
+    "image": "/static/images/patlıcan.png.png",
+    "price": 35
   },
   {
     "id": 57,
-    "name": "Pilavlık Pirinç 1 Kg",
-    "image": "/static/images/pilavlık pirinç 1 kg.png.png",
-    "price": 100
+    "name": "Pilavlık Bulgur 1 Kg",
+    "image": "/static/images/pilavlık bulgur 1 kg.png.png",
+    "price": 142
   },
   {
     "id": 58,
-    "name": "Portakal",
-    "image": "/static/images/portakal.png.png",
-    "price": 497
+    "name": "Pilavlık Pirinç 1 Kg",
+    "image": "/static/images/pilavlık pirinç 1 kg.png.png",
+    "price": 220
   },
   {
     "id": 59,
-    "name": "Powerbank",
-    "image": "/static/images/powerbank.png.png",
-    "price": 10
+    "name": "Portakal",
+    "image": "/static/images/portakal.png.png",
+    "price": 433
   },
   {
     "id": 60,
-    "name": "Pulbıber",
-    "image": "/static/images/pulbıber.png.jpeg",
-    "price": 202
+    "name": "Powerbank",
+    "image": "/static/images/powerbank.png.png",
+    "price": 43
   },
   {
     "id": 61,
-    "name": "Puzzle",
-    "image": "/static/images/puzzle.png.webp",
-    "price": 361
+    "name": "Pulbıber",
+    "image": "/static/images/pulbıber.png.jpeg",
+    "price": 103
   },
   {
     "id": 62,
-    "name": "Robotsupurge",
-    "image": "/static/images/robotsupurge.png.jpg",
-    "price": 169
+    "name": "Puzzle",
+    "image": "/static/images/puzzle.png.webp",
+    "price": 19
   },
   {
     "id": 63,
-    "name": "Saat",
-    "image": "/static/images/saat.png.png",
-    "price": 364
+    "name": "Robotsupurge",
+    "image": "/static/images/robotsupurge.png.jpg",
+    "price": 264
   },
   {
     "id": 64,
-    "name": "Sakız",
-    "image": "/static/images/sakız.png.png",
-    "price": 191
+    "name": "Saat",
+    "image": "/static/images/saat.png.png",
+    "price": 100
   },
   {
     "id": 65,
-    "name": "Salatalık",
-    "image": "/static/images/salatalık.png.png",
-    "price": 280
+    "name": "Sakız",
+    "image": "/static/images/sakız.png.png",
+    "price": 310
   },
   {
     "id": 66,
-    "name": "Salgam",
-    "image": "/static/images/salgam.png.png",
-    "price": 24
+    "name": "Salatalık",
+    "image": "/static/images/salatalık.png.png",
+    "price": 312
   },
   {
     "id": 67,
-    "name": "Salkım Domates 1 Kg",
-    "image": "/static/images/salkım domates 1 kg.png.png",
-    "price": 444
+    "name": "Salgam",
+    "image": "/static/images/salgam.png.png",
+    "price": 235
   },
   {
     "id": 68,
-    "name": "Saçboyası",
-    "image": "/static/images/saçboyası.png.jpg",
-    "price": 38
+    "name": "Salkım Domates 1 Kg",
+    "image": "/static/images/salkım domates 1 kg.png.png",
+    "price": 98
   },
   {
     "id": 69,
-    "name": "Seftalı",
-    "image": "/static/images/seftalı.png.png",
-    "price": 132
+    "name": "Saçboyası",
+    "image": "/static/images/saçboyası.png.jpg",
+    "price": 336
   },
   {
     "id": 70,
-    "name": "Slım Fit Gömlek",
-    "image": "/static/images/slım fit gömlek.png.png",
-    "price": 46
+    "name": "Seftalı",
+    "image": "/static/images/seftalı.png.png",
+    "price": 433
   },
   {
     "id": 71,
-    "name": "Sogan",
-    "image": "/static/images/sogan.png.webp",
-    "price": 48
+    "name": "Slım Fit Gömlek",
+    "image": "/static/images/slım fit gömlek.png.png",
+    "price": 110
   },
   {
     "id": 72,
-    "name": "Spagetti Makarna",
-    "image": "/static/images/spagetti makarna.png.png",
-    "price": 108
+    "name": "Sogan",
+    "image": "/static/images/sogan.png.webp",
+    "price": 285
   },
   {
     "id": 73,
-    "name": "Su",
-    "image": "/static/images/su.png.png",
-    "price": 239
+    "name": "Spagetti Makarna",
+    "image": "/static/images/spagetti makarna.png.png",
+    "price": 423
   },
   {
     "id": 74,
-    "name": "Sumak",
-    "image": "/static/images/sumak.png.jpg",
-    "price": 145
+    "name": "Su",
+    "image": "/static/images/su.png.png",
+    "price": 365
   },
   {
     "id": 75,
-    "name": "Sıvı Deterjan 2 Lt",
-    "image": "/static/images/sıvı deterjan 2 lt.png.png",
-    "price": 196
+    "name": "Sumak",
+    "image": "/static/images/sumak.png.jpg",
+    "price": 262
   },
   {
     "id": 76,
-    "name": "Sıvısabun",
-    "image": "/static/images/sıvısabun.png.webp",
-    "price": 38
+    "name": "Sıvı Deterjan 2 Lt",
+    "image": "/static/images/sıvı deterjan 2 lt.png.png",
+    "price": 366
   },
   {
     "id": 77,
-    "name": "Tablet",
-    "image": "/static/images/tablet.png.png",
-    "price": 88
+    "name": "Sıvısabun",
+    "image": "/static/images/sıvısabun.png.webp",
+    "price": 444
   },
   {
     "id": 78,
-    "name": "Tam Yağlı Kaşar Peyniri 400 Gr",
-    "image": "/static/images/tam yağlı kaşar peyniri 400 gr.png.png",
-    "price": 475
+    "name": "Tablet",
+    "image": "/static/images/tablet.png.png",
+    "price": 19
   },
   {
     "id": 79,
-    "name": "Tam Yağlı Süt 1Lt",
-    "image": "/static/images/tam yağlı süt 1lt.png.png",
-    "price": 256
+    "name": "Tam Yağlı Kaşar Peyniri 400 Gr",
+    "image": "/static/images/tam yağlı kaşar peyniri 400 gr.png.png",
+    "price": 208
   },
   {
     "id": 80,
-    "name": "Tarcın",
-    "image": "/static/images/tarcın.png.jpg",
-    "price": 212
+    "name": "Tam Yağlı Süt 1Lt",
+    "image": "/static/images/tam yağlı süt 1lt.png.png",
+    "price": 242
   },
   {
     "id": 81,
-    "name": "Tavuk Göğsü 1 Kg",
-    "image": "/static/images/tavuk göğsü 1 kg.png.png",
-    "price": 162
+    "name": "Tarcın",
+    "image": "/static/images/tarcın.png.jpg",
+    "price": 171
   },
   {
     "id": 82,
-    "name": "Telefon",
-    "image": "/static/images/telefon.png.png",
-    "price": 190
+    "name": "Tavuk Göğsü 1 Kg",
+    "image": "/static/images/tavuk göğsü 1 kg.png.png",
+    "price": 194
   },
   {
     "id": 83,
-    "name": "Terlik",
-    "image": "/static/images/terlik.png.jpg",
-    "price": 174
+    "name": "Telefon",
+    "image": "/static/images/telefon.png.png",
+    "price": 312
   },
   {
     "id": 84,
-    "name": "Toz Şeker 1 Kg",
-    "image": "/static/images/toz şeker 1 kg.png.png",
-    "price": 146
+    "name": "Terlik",
+    "image": "/static/images/terlik.png.jpg",
+    "price": 202
   },
   {
     "id": 85,
-    "name": "Tuvalet Kağıdı 12 Li Rulo",
-    "image": "/static/images/tuvalet kağıdı 12 li rulo.png.png",
-    "price": 23
+    "name": "Toz Şeker 1 Kg",
+    "image": "/static/images/toz şeker 1 kg.png.png",
+    "price": 166
   },
   {
     "id": 86,
-    "name": "Uzum",
-    "image": "/static/images/uzum.png.png",
-    "price": 386
+    "name": "Tuvalet Kağıdı 12 Li Rulo",
+    "image": "/static/images/tuvalet kağıdı 12 li rulo.png.png",
+    "price": 206
   },
   {
     "id": 87,
-    "name": "Yarım Yağlı Süt 1 Lt",
-    "image": "/static/images/yarım yağlı süt 1 lt.png.png",
-    "price": 250
+    "name": "Uzum",
+    "image": "/static/images/uzum.png.png",
+    "price": 73
   },
   {
     "id": 88,
-    "name": "Ymurta 15 Li",
-    "image": "/static/images/ymurta 15 li.png.png",
-    "price": 437
+    "name": "Yarım Yağlı Süt 1 Lt",
+    "image": "/static/images/yarım yağlı süt 1 lt.png.png",
+    "price": 166
   },
   {
     "id": 89,
-    "name": "Yün Atkı",
-    "image": "/static/images/yün atkı.png.png",
-    "price": 137
+    "name": "Ymurta 15 Li",
+    "image": "/static/images/ymurta 15 li.png.png",
+    "price": 244
   },
   {
     "id": 90,
-    "name": "Yün Kazak 1 Adet",
-    "image": "/static/images/yün kazak 1 adet.png.png",
-    "price": 141
+    "name": "Yün Atkı",
+    "image": "/static/images/yün atkı.png.png",
+    "price": 242
   },
   {
     "id": 91,
-    "name": "Yüzey Temizleyici",
-    "image": "/static/images/yüzey temizleyici.png.png",
-    "price": 12
+    "name": "Yün Kazak 1 Adet",
+    "image": "/static/images/yün kazak 1 adet.png.png",
+    "price": 494
   },
   {
     "id": 92,
+    "name": "Yüzey Temizleyici",
+    "image": "/static/images/yüzey temizleyici.png.png",
+    "price": 213
+  },
+  {
+    "id": 93,
     "name": "Çengeköy Salatalık 1Kg",
     "image": "/static/images/çengeköy salatalık 1kg.png.png",
-    "price": 284
+    "price": 489
   }
 ]
