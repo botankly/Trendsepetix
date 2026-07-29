@@ -11,8 +11,8 @@ const MOCK_SALES = [
     lat: 40.9901,
     lng: 29.0290,
     products: [
-      { id: 1, name: "Kablosuz ANC Kulaklık", price: 1299, category: "Teknoloji" },
-      { id: 2, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji" }
+      { id: 1, name: "Kablosuz ANC Kulaklık", price: 1299, category: "Teknoloji", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" },
+      { id: 2, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" }
     ]
   },
   {
@@ -22,8 +22,8 @@ const MOCK_SALES = [
     lat: 41.0428,
     lng: 29.0075,
     products: [
-      { id: 3, name: "Pamuklu Spor Tişört", price: 349, category: "Giyim & Aksesuar" },
-      { id: 4, name: "Koşu Ayakkabısı", price: 1499, category: "Spor & Outdoor" }
+      { id: 3, name: "Pamuklu Spor Tişört", price: 349, category: "Giyim & Aksesuar", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" },
+      { id: 4, name: "Koşu Ayakkabısı", price: 1499, category: "Spor & Outdoor", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" }
     ]
   },
   {
@@ -33,8 +33,8 @@ const MOCK_SALES = [
     lat: 41.0600,
     lng: 28.9870,
     products: [
-      { id: 5, name: "Nemlendirici Yüz Kremi", price: 289, category: "Kişisel Bakım" },
-      { id: 6, name: "Sıvı El Sabunu", price: 79, category: "Kişisel Bakım" }
+      { id: 5, name: "Nemlendirici Yüz Kremi", price: 289, category: "Kişisel Bakım", image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500" },
+      { id: 6, name: "Sıvı El Sabunu", price: 79, category: "Kişisel Bakım", image: "https://images.unsplash.com/photo-1607006342411-92fc4627d70e?w=500" }
     ]
   },
   {
@@ -44,8 +44,8 @@ const MOCK_SALES = [
     lat: 41.0267,
     lng: 29.0154,
     products: [
-      { id: 7, name: "Organik Zeytinyağı 1L", price: 320, category: "Gıda" },
-      { id: 8, name: "Premium Siyah Çay 1Kg", price: 180, category: "Gıda" }
+      { id: 7, name: "Organik Zeytinyağı 1L", price: 320, category: "Gıda", image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500" },
+      { id: 8, name: "Premium Siyah Çay 1Kg", price: 180, category: "Gıda", image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500" }
     ]
   },
   {
@@ -55,8 +55,8 @@ const MOCK_SALES = [
     lat: 41.0186,
     lng: 28.9438,
     products: [
-      { id: 9, name: "Mikrofiber Temizlik Bezi", price: 65, category: "Temizlik" },
-      { id: 10, name: "Ultra Çamaşır Suyu", price: 49, category: "Temizlik" }
+      { id: 9, name: "Mikrofiber Temizlik Bezi", price: 65, category: "Temizlik", image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500" },
+      { id: 10, name: "Ultra Çamaşır Suyu", price: 49, category: "Temizlik", image: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500" }
     ]
   },
   {
@@ -66,8 +66,8 @@ const MOCK_SALES = [
     lat: 41.1685,
     lng: 29.0573,
     products: [
-      { id: 11, name: "Kedi Maması Premium 5Kg", price: 450, category: "Pet Shop" },
-      { id: 12, name: "Kedi Kumu Kokusuz", price: 120, category: "Pet Shop" }
+      { id: 11, name: "Kedi Maması Premium 5Kg", price: 450, category: "Pet Shop", image: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500" },
+      { id: 12, name: "Kedi Kumu Kokusuz", price: 120, category: "Pet Shop", image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500" }
     ]
   },
   {
@@ -77,8 +77,8 @@ const MOCK_SALES = [
     lat: 40.9850,
     lng: 29.0250,
     products: [
-      { id: 13, name: "12'li Resim Kalemi Seti", price: 150, category: "Kırtasiye" },
-      { id: 14, name: "Çizgili A4 Defter", price: 55, category: "Kırtasiye" }
+      { id: 13, name: "12'li Resim Kalemi Seti", price: 150, category: "Kırtasiye", image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500" },
+      { id: 14, name: "Çizgili A4 Defter", price: 55, category: "Kırtasiye", image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500" }
     ]
   },
   {
@@ -88,8 +88,8 @@ const MOCK_SALES = [
     lat: 40.9847,
     lng: 29.1064,
     products: [
-      { id: 15, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji" },
-      { id: 16, name: "Ergonomik Kablosuz Mouse", price: 450, category: "Teknoloji" }
+      { id: 15, name: "Akıllı Saat Pro", price: 2499, category: "Teknoloji", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" },
+      { id: 16, name: "Ergonomik Kablosuz Mouse", price: 450, category: "Teknoloji", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500" }
     ]
   },
   {
@@ -99,8 +99,8 @@ const MOCK_SALES = [
     lat: 40.9782,
     lng: 28.7845,
     products: [
-      { id: 17, name: "Katlanabilir Kamp Sandalyesi", price: 399, category: "Spor & Outdoor" },
-      { id: 18, name: "Termos 1L", price: 650, category: "Spor & Outdoor" }
+      { id: 17, name: "Katlanabilir Kamp Sandalyesi", price: 399, category: "Spor & Outdoor", image: "https://images.unsplash.com/photo-1596265376427-4688ee0f610f?w=500" },
+      { id: 18, name: "Termos 1L", price: 650, category: "Spor & Outdoor", image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500" }
     ]
   },
   {
@@ -110,8 +110,8 @@ const MOCK_SALES = [
     lat: 40.8886,
     lng: 29.1856,
     products: [
-      { id: 19, name: "Bulaşık Makinesi Tableti 30 Lu", price: 240, category: "Temizlik" },
-      { id: 20, name: "Yüzey Temizleyici 2L", price: 75, category: "Temizlik" }
+      { id: 19, name: "Bulaşık Makinesi Tableti 30 Lu", price: 240, category: "Temizlik", image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500" },
+      { id: 20, name: "Yüzey Temizleyici 2L", price: 75, category: "Temizlik", image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500" }
     ]
   },
   {
@@ -121,8 +121,8 @@ const MOCK_SALES = [
     lat: 41.0012,
     lng: 28.6419,
     products: [
-      { id: 21, name: "Dekoratif Duvar Saati", price: 350, category: "Ev & Yaşam" },
-      { id: 22, name: "Led Ampul 10'lu", price: 190, category: "Ev & Yaşam" }
+      { id: 21, name: "Dekoratif Duvar Saati", price: 350, category: "Ev & Yaşam", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" },
+      { id: 22, name: "Led Ampul 10'lu", price: 190, category: "Ev & Yaşam", image: "https://images.unsplash.com/photo-1550985616-10810253b84d?w=500" }
     ]
   },
   {
@@ -132,8 +132,8 @@ const MOCK_SALES = [
     lat: 41.0435,
     lng: 29.0065,
     products: [
-      { id: 23, name: "Kablosuz Klavye Türkçe", price: 799, category: "Teknoloji" },
-      { id: 24, name: "Laptop Yükseltici Alüminyum", price: 350, category: "Teknoloji" }
+      { id: 23, name: "Kablosuz Klavye Türkçe", price: 799, category: "Teknoloji", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500" },
+      { id: 24, name: "Laptop Yükseltici Alüminyum", price: 350, category: "Teknoloji", image: "https://images.unsplash.com/photo-1496181130204-755241524eab?w=500" }
     ]
   },
   {
@@ -143,8 +143,8 @@ const MOCK_SALES = [
     lat: 40.9910,
     lng: 29.0275,
     products: [
-      { id: 25, name: "Klasik Kot Ceket", price: 899, category: "Giyim & Aksesuar" },
-      { id: 26, name: "Deri Kemer Siyah", price: 249, category: "Giyim & Aksesuar" }
+      { id: 25, name: "Klasik Kot Ceket", price: 899, category: "Giyim & Aksesuar", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500" },
+      { id: 26, name: "Deri Kemer Siyah", price: 249, category: "Giyim & Aksesuar", image: "https://images.unsplash.com/photo-1624222247344-550fb8ec5519?w=500" }
     ]
   },
   {
@@ -154,8 +154,8 @@ const MOCK_SALES = [
     lat: 41.0260,
     lng: 29.0145,
     products: [
-      { id: 27, name: "Doğal Bal 500g", price: 240, category: "Gıda" },
-      { id: 28, name: "Süzme Peynir 500 Gr", price: 140, category: "Gıda" }
+      { id: 27, name: "Doğal Bal 500g", price: 240, category: "Gıda", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=500" },
+      { id: 28, name: "Süzme Peynir 500 Gr", price: 140, category: "Gıda", image: "https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=500" }
     ]
   },
   {
@@ -165,8 +165,8 @@ const MOCK_SALES = [
     lat: 41.0590,
     lng: 28.9885,
     products: [
-      { id: 29, name: "Diş Macunu Beyazlatıcı", price: 110, category: "Kişisel Bakım" },
-      { id: 30, name: "Şampuan Bitkisel Özlü", price: 135, category: "Kişisel Bakım" }
+      { id: 29, name: "Diş Macunu Beyazlatıcı", price: 110, category: "Kişisel Bakım", image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500" },
+      { id: 30, name: "Şampuan Bitkisel Özlü", price: 135, category: "Kişisel Bakım", image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500" }
     ]
   }
 ];
@@ -576,7 +576,7 @@ function App() {
       
       // 7. Snacks & Drinks
       if (n.includes('biskuvi') || n.includes('bıskuvı') || n.includes('çikolata') || n.includes('cıkolata') || n.includes('kraker') || n.includes('kek') || n.includes('jelibon') || n.includes('jelıbon') || n.includes('lolıop') || n.includes('lolipop') || n.includes('sakız')) return 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500';
-      if (n.includes('gazoz') || n.includes('kola') || n.includes('salgam') || n.includes('şalgam') || n.includes('su') || n.includes('içecek') || n.includes('bal')) return 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
+      if (n.includes('gazoz') || n.includes('kola') || n.includes('salgam') || n.includes('şalgam') || n === 'su' || n.includes(' su ') || n.endsWith(' su') || n.startsWith('su ') || n.includes('içecek') || n.includes('bal')) return 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500';
 
       // 8. Cleaning & Care
       if (n.includes('deterjan') || n.includes('sabun') || n.includes('temizleyici') || n.includes('çamaşırsuyu') || n.includes('camasırsuyu') || n.includes('sıvısabun') || n.includes('deodorant') || n.includes('parfum') || n.includes('şampuan') || n.includes('saçboyası') || n.includes('krem') || n.includes('macun') || n.includes('nemlendirici')) return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500';
